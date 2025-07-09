@@ -34,10 +34,8 @@ const Auth = () => {
     rememberMe: false
   });
 
-  // Real-time validation
-  useEffect(() => {
-    validateForm();
-  }, [formData, isLogin]);
+  // Track which fields have been touched
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
 
   // Password strength calculation
   useEffect(() => {
@@ -87,45 +85,50 @@ const Auth = () => {
     return "bg-success";
   };
 
-  const validateForm = () => {
+  const validateForm = (forSubmit = false) => {
     const errors: Record<string, string> = {};
 
     if (!isLogin) {
-      // Name validation
-      if (!formData.name.trim()) {
+      // Name validation - only show if touched or submitting
+      if ((touchedFields.name || forSubmit) && !formData.name.trim()) {
         errors.name = "Full name is required";
-      } else if (formData.name.trim().length < 2) {
+      } else if ((touchedFields.name || forSubmit) && formData.name.trim() && formData.name.trim().length < 2) {
         errors.name = "Name must be at least 2 characters";
       }
 
-      // Password confirmation
-      if (formData.password !== formData.confirmPassword && formData.confirmPassword) {
+      // Password confirmation - only show if confirmPassword is touched or submitting
+      if ((touchedFields.confirmPassword || forSubmit) && formData.password !== formData.confirmPassword && formData.confirmPassword) {
         errors.confirmPassword = "Passwords do not match";
       }
 
-      // Terms acceptance
-      if (!formData.termsAccepted) {
+      // Terms acceptance - only show when submitting
+      if (forSubmit && !formData.termsAccepted) {
         errors.terms = "You must accept the terms and conditions";
       }
 
-      // Password strength requirement
-      if (formData.password && passwordStrength < 50) {
+      // Password strength requirement - only show if password is touched or submitting
+      if ((touchedFields.password || forSubmit) && formData.password && passwordStrength < 50) {
         errors.password = "Password must be at least 'Good' strength";
       }
     }
 
-    // Email validation
-    if (formData.email && !isEmailValid) {
+    // Email validation - only show if touched or submitting
+    if ((touchedFields.email || forSubmit) && formData.email && !isEmailValid) {
       errors.email = "Please enter a valid email address";
     }
 
-    // Password requirement
-    if (!formData.password) {
+    // Password requirement - only show if touched or submitting
+    if ((touchedFields.password || forSubmit) && !formData.password) {
       errors.password = "Password is required";
     }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const handleFieldBlur = (fieldName: string) => {
+    setTouchedFields(prev => ({ ...prev, [fieldName]: true }));
+    validateForm();
   };
 
   const checkEmailExists = async (email: string) => {
@@ -140,7 +143,7 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if (!validateForm(true)) {
       toast({
         title: "Validation Error",
         description: "Please fix the errors before continuing.",
@@ -266,6 +269,7 @@ const Auth = () => {
                       placeholder="Enter your full name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onBlur={() => handleFieldBlur('name')}
                       className={`pl-10 ${validationErrors.name ? 'border-destructive' : ''}`}
                       required={!isLogin}
                     />
@@ -289,6 +293,7 @@ const Auth = () => {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onBlur={() => handleFieldBlur('email')}
                     className={`pl-10 pr-10 ${validationErrors.email ? 'border-destructive' : isEmailValid ? 'border-success' : ''}`}
                     required
                   />
@@ -326,6 +331,7 @@ const Auth = () => {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onBlur={() => handleFieldBlur('password')}
                     className={`pl-10 pr-10 ${validationErrors.password ? 'border-destructive' : ''}`}
                     required
                   />
@@ -404,6 +410,7 @@ const Auth = () => {
                       placeholder="Confirm your password"
                       value={formData.confirmPassword}
                       onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                      onBlur={() => handleFieldBlur('confirmPassword')}
                       className={`pl-10 pr-10 ${validationErrors.confirmPassword ? 'border-destructive' : 
                         formData.confirmPassword && formData.password === formData.confirmPassword ? 'border-success' : ''}`}
                       required={!isLogin}
