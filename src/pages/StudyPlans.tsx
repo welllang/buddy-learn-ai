@@ -20,16 +20,59 @@ import {
   Archive,
   ChevronRight,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  Star,
+  Zap,
+  Award,
+  Users
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+const CircularProgress = ({ progress }: { progress: number }) => {
+  const radius = 32;
+  const strokeWidth = 4;
+  const normalizedRadius = radius - strokeWidth * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  return (
+    <div className="relative w-20 h-20">
+      <svg height={radius * 2} width={radius * 2} className="transform -rotate-90">
+        <circle
+          stroke="hsl(var(--muted))"
+          fill="transparent"
+          strokeWidth={strokeWidth}
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+        />
+        <circle
+          stroke="hsl(var(--primary))"
+          fill="transparent"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference + ' ' + circumference}
+          style={{ strokeDashoffset }}
+          strokeLinecap="round"
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+          className="transition-all duration-500 ease-in-out"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-sm font-bold text-primary">{progress}%</span>
+      </div>
+    </div>
+  );
+};
+
 const StudyPlans = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("active");
   const { toast } = useToast();
 
   // Demo study plans data
@@ -75,6 +118,20 @@ const StudyPlans = () => {
       totalSessions: 20,
       completedTopics: 10,
       totalTopics: 10
+    },
+    {
+      id: 4,
+      title: "Spanish Conversation",
+      subject: "Languages",
+      progress: 25,
+      targetDate: "2024-04-20",
+      dailyTime: 45,
+      difficulty: "Intermediate",
+      status: "paused",
+      lastStudied: "3 days ago",
+      totalSessions: 5,
+      completedTopics: 3,
+      totalTopics: 12
     }
   ];
 
@@ -142,21 +199,26 @@ const StudyPlans = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
-      case 'beginner': return 'bg-success/10 text-success border-success/20';
-      case 'intermediate': return 'bg-warning/10 text-warning border-warning/20';
-      case 'advanced': return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'beginner': return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800';
+      case 'intermediate': return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800';
+      case 'advanced': return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800';
       default: return 'bg-muted/10 text-muted-foreground border-muted/20';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-primary/10 text-primary border-primary/20';
-      case 'completed': return 'bg-success/10 text-success border-success/20';
-      case 'paused': return 'bg-muted/10 text-muted-foreground border-muted/20';
+      case 'active': return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800';
+      case 'completed': return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800';
+      case 'paused': return 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800';
       default: return 'bg-muted/10 text-muted-foreground border-muted/20';
     }
   };
+
+  const filteredPlans = studyPlans.filter(plan => {
+    if (activeFilter === "all") return true;
+    return plan.status === activeFilter;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -188,23 +250,64 @@ const StudyPlans = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Study Plans</h1>
-            <p className="text-muted-foreground">Manage your AI-powered learning journeys</p>
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              My Study Plans
+            </h1>
+            <p className="text-muted-foreground text-lg">Manage your AI-powered learning journeys</p>
           </div>
-          <div className="flex items-center gap-3 mt-4 md:mt-0">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search plans..." className="pl-10 w-64" />
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6 lg:mt-0">
+            {/* Filter Options */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Filter:</span>
+              <div className="flex gap-1">
+                <Button 
+                  variant={activeFilter === "active" ? "default" : "ghost"} 
+                  size="sm" 
+                  className={activeFilter === "active" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""}
+                  onClick={() => setActiveFilter("active")}
+                >
+                  Active
+                </Button>
+                <Button 
+                  variant={activeFilter === "completed" ? "default" : "ghost"} 
+                  size="sm"
+                  className={activeFilter === "completed" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""}
+                  onClick={() => setActiveFilter("completed")}
+                >
+                  Completed
+                </Button>
+                <Button 
+                  variant={activeFilter === "paused" ? "default" : "ghost"} 
+                  size="sm"
+                  className={activeFilter === "paused" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""}
+                  onClick={() => setActiveFilter("paused")}
+                >
+                  Paused
+                </Button>
+              </div>
             </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button onClick={() => setShowCreateForm(true)} className="bg-gradient-to-r from-primary to-secondary">
+            
+            {/* Sort Options */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Sort:</span>
+              <Select defaultValue="recent">
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recent">Recent</SelectItem>
+                  <SelectItem value="deadline">Deadline</SelectItem>
+                  <SelectItem value="progress">Progress</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <Button onClick={() => setShowCreateForm(true)} className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg">
               <Plus className="h-4 w-4 mr-2" />
-              Create Plan
+              Create New Plan
             </Button>
           </div>
         </div>
@@ -322,34 +425,30 @@ const StudyPlans = () => {
         )}
 
         {/* Study Plans Grid */}
-        <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {studyPlans.map((plan) => (
-            <Card key={plan.id} className="group hover:shadow-lg transition-all duration-200 border-border/50">
-              <CardHeader className="space-y-3">
+        <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+          {filteredPlans.map((plan) => (
+            <Card key={plan.id} className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/20">
+              <CardHeader className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg mb-1">{plan.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                      <BookOpen className="h-3 w-3" />
+                    <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
+                      {plan.title}
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-2 text-base">
+                      <BookOpen className="h-4 w-4" />
                       {plan.subject}
                     </CardDescription>
                   </div>
-                  <div className="flex gap-1">
-                    <Badge className={getDifficultyColor(plan.difficulty)}>
-                      {plan.difficulty}
-                    </Badge>
-                    <Badge className={getStatusColor(plan.status)}>
-                      {plan.status}
-                    </Badge>
-                  </div>
+                  <CircularProgress progress={plan.progress} />
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Progress</span>
-                    <span className="font-medium">{plan.progress}%</span>
-                  </div>
-                  <Progress value={plan.progress} className="h-2" />
+                <div className="flex gap-2">
+                  <Badge className={getDifficultyColor(plan.difficulty)} variant="outline">
+                    {plan.difficulty}
+                  </Badge>
+                  <Badge className={getStatusColor(plan.status)} variant="outline">
+                    {plan.status}
+                  </Badge>
                 </div>
               </CardHeader>
 
@@ -407,35 +506,109 @@ const StudyPlans = () => {
         </div>
 
         {/* AI Suggestions */}
-        <Card className="mt-8 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
+        <Card className="bg-gradient-to-br from-primary/5 via-secondary/5 to-primary/5 border-primary/20 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Brain className="h-5 w-5 mr-2 text-primary" />
-              AI Recommended Study Plans
-            </CardTitle>
-            <CardDescription>
-              Based on your interests and current progress
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center text-2xl">
+                  <Brain className="h-6 w-6 mr-3 text-primary" />
+                  Recommended Study Plans
+                </CardTitle>
+                <CardDescription className="text-base mt-2">
+                  AI-curated plans based on your interests and trending topics in your field
+                </CardDescription>
+              </div>
+              <Badge className="bg-gradient-to-r from-primary to-secondary text-white">
+                <Sparkles className="h-3 w-3 mr-1" />
+                AI Powered
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 gap-6">
               {[
-                { title: "Advanced Algorithms", difficulty: "Advanced", time: "90 min/day" },
-                { title: "Machine Learning Basics", difficulty: "Intermediate", time: "60 min/day" },
-                { title: "Database Design", difficulty: "Intermediate", time: "45 min/day" }
+                { 
+                  title: "Advanced Algorithms", 
+                  difficulty: "Advanced", 
+                  time: "90 min/day",
+                  icon: Target,
+                  trending: true,
+                  students: "2.4k",
+                  description: "Master complex algorithms and data structures"
+                },
+                { 
+                  title: "Machine Learning Basics", 
+                  difficulty: "Intermediate", 
+                  time: "60 min/day",
+                  icon: Brain,
+                  trending: true,
+                  students: "5.7k",
+                  description: "Introduction to ML concepts and practical applications"
+                },
+                { 
+                  title: "Database Design", 
+                  difficulty: "Intermediate", 
+                  time: "45 min/day",
+                  icon: Archive,
+                  trending: false,
+                  students: "1.8k",
+                  description: "Learn to design efficient and scalable databases"
+                }
               ].map((suggestion, index) => (
-                <div key={index} className="p-4 rounded-lg bg-background/50 border border-border/50">
-                  <h4 className="font-medium mb-2">{suggestion.title}</h4>
-                  <div className="flex justify-between items-center text-sm text-muted-foreground mb-3">
-                    <span>{suggestion.difficulty}</span>
-                    <span>{suggestion.time}</span>
+                <div key={index} className="group p-6 rounded-xl bg-background/80 border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <suggestion.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    {suggestion.trending && (
+                      <Badge className="bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400" variant="outline">
+                        <TrendingUp className="h-3 w-3 mr-1" />
+                        Trending
+                      </Badge>
+                    )}
                   </div>
-                  <Button size="sm" variant="outline" className="w-full">
-                    <Plus className="h-3 w-3 mr-1" />
+                  
+                  <h4 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
+                    {suggestion.title}
+                  </h4>
+                  
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                    {suggestion.description}
+                  </p>
+                  
+                  <div className="flex justify-between items-center text-sm text-muted-foreground mb-4">
+                    <div className="flex items-center gap-1">
+                      <Award className="h-3 w-3" />
+                      <span>{suggestion.difficulty}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{suggestion.time}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      <span>{suggestion.students}</span>
+                    </div>
+                  </div>
+                  
+                  <Button size="sm" className="w-full bg-gradient-to-r from-primary to-secondary hover:shadow-md group-hover:scale-105 transition-all duration-300">
+                    <Plus className="h-3 w-3 mr-2" />
                     Create Plan
+                    <ChevronRight className="h-3 w-3 ml-2" />
                   </Button>
                 </div>
               ))}
+            </div>
+            
+            <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border/50">
+              <div className="flex items-center gap-2 mb-2">
+                <Zap className="h-4 w-4 text-primary" />
+                <span className="font-medium text-sm">AI Insight</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Based on your learning pattern and current progress, we recommend starting with 
+                <span className="font-medium text-foreground"> Machine Learning Basics</span> to complement your Computer Science studies.
+              </p>
             </div>
           </CardContent>
         </Card>
