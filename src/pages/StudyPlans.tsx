@@ -287,7 +287,13 @@ const StudyPlans = () => {
             
             <Button onClick={() => setShowCreateForm(true)} className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg">
               <Plus className="h-4 w-4 mr-2" />
-              Create New Plan
+              Quick Create
+            </Button>
+            <Button asChild className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg">
+              <Link to="/study-plans/create">
+                <Plus className="h-4 w-4 mr-2" />
+                Create New Plan
+              </Link>
             </Button>
           </div>
         </div>

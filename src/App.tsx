@@ -9,6 +9,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import StudyPlans from "./pages/StudyPlans";
 import StudyPlanDetail from "./pages/StudyPlanDetail";
+import CreateStudyPlan from "./pages/CreateStudyPlan";
 import Schedule from "./pages/Schedule";
 import Progress from "./pages/Progress";
 import Goals from "./pages/Goals";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/study-plans" element={<StudyPlans />} />
+          <Route path="/study-plans/create" element={<CreateStudyPlan />} />
           <Route path="/study-plans/:id" element={<StudyPlanDetail />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/progress" element={<Progress />} />
