@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import AIAssistant from "@/components/AIAssistant";
 import { 
   BookOpen, 
   Target, 
@@ -22,6 +24,8 @@ import {
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  
   // Demo data
   const currentStreak = 7;
   const weeklyProgress = [65, 78, 82, 45, 90, 88, 75];
@@ -63,7 +67,11 @@ const Dashboard = () => {
             </nav>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setIsAIAssistantOpen(true)}
+            >
               <MessageSquare className="h-4 w-4 mr-2" />
               AI Assistant
             </Button>
@@ -290,6 +298,13 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* AI Assistant */}
+      <AIAssistant 
+        isOpen={isAIAssistantOpen}
+        onClose={() => setIsAIAssistantOpen(false)}
+        context="Dashboard - Current study session and progress overview"
+      />
     </div>
   );
 };
