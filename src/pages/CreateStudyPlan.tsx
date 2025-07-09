@@ -219,93 +219,130 @@ const CreateStudyPlan = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <BookOpen className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Basic Information</h2>
-              <p className="text-muted-foreground">Let's start with the fundamentals of your study plan</p>
+          <div className="space-y-8">
+            <div className="text-center mb-12">
+              <div className="w-20 h-20 bg-gradient-to-br from-primary via-primary/80 to-secondary rounded-full flex items-center justify-center mb-6 mx-auto">
+                <BookOpen className="h-10 w-10 text-white" />
+              </div>
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Let's Create Something Amazing
+              </h2>
+              <p className="text-lg text-muted-foreground">Tell us about your learning journey</p>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="planName">Plan Name/Title *</Label>
-                <Input
-                  id="planName"
-                  placeholder="e.g., Advanced Computer Science Fundamentals"
-                  value={formData.planName}
-                  onChange={(e) => updateFormData('planName', e.target.value)}
-                />
+            <div className="space-y-8">
+              {/* Plan Name - Modern Input */}
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold">What's your study plan called?</Label>
+                <div className="relative">
+                  <Input
+                    placeholder="e.g., Master Machine Learning Fundamentals"
+                    value={formData.planName}
+                    onChange={(e) => updateFormData('planName', e.target.value)}
+                    className="text-lg py-6 px-6 border-2 border-border/50 rounded-2xl bg-background/50 focus:bg-background focus:border-primary/50 transition-all duration-300"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <BookOpen className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="subjectCategory">Subject Category *</Label>
-                <Select value={formData.subjectCategory} onValueChange={(value) => updateFormData('subjectCategory', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a subject category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="computer-science">Computer Science</SelectItem>
-                    <SelectItem value="mathematics">Mathematics</SelectItem>
-                    <SelectItem value="physics">Physics</SelectItem>
-                    <SelectItem value="chemistry">Chemistry</SelectItem>
-                    <SelectItem value="biology">Biology</SelectItem>
-                    <SelectItem value="engineering">Engineering</SelectItem>
-                    <SelectItem value="business">Business</SelectItem>
-                    <SelectItem value="languages">Languages</SelectItem>
-                    <SelectItem value="arts">Arts & Humanities</SelectItem>
-                    <SelectItem value="medicine">Medicine</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Subject Category - Card Selection */}
+              <div className="space-y-6">
+                <Label className="text-lg font-semibold">Choose your subject category</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {[
+                    { value: 'computer-science', label: 'Computer Science', icon: '💻', gradient: 'from-blue-500 to-cyan-500' },
+                    { value: 'mathematics', label: 'Mathematics', icon: '📐', gradient: 'from-purple-500 to-pink-500' },
+                    { value: 'physics', label: 'Physics', icon: '⚛️', gradient: 'from-orange-500 to-red-500' },
+                    { value: 'chemistry', label: 'Chemistry', icon: '🧪', gradient: 'from-green-500 to-teal-500' },
+                    { value: 'biology', label: 'Biology', icon: '🧬', gradient: 'from-emerald-500 to-green-500' },
+                    { value: 'engineering', label: 'Engineering', icon: '⚙️', gradient: 'from-gray-500 to-slate-500' },
+                    { value: 'business', label: 'Business', icon: '💼', gradient: 'from-yellow-500 to-orange-500' },
+                    { value: 'languages', label: 'Languages', icon: '🌍', gradient: 'from-indigo-500 to-purple-500' },
+                    { value: 'arts', label: 'Arts & Humanities', icon: '🎨', gradient: 'from-pink-500 to-rose-500' },
+                    { value: 'medicine', label: 'Medicine', icon: '🏥', gradient: 'from-red-500 to-pink-500' },
+                    { value: 'other', label: 'Other', icon: '✨', gradient: 'from-violet-500 to-purple-500' }
+                  ].map((subject) => (
+                    <div
+                      key={subject.value}
+                      onClick={() => updateFormData('subjectCategory', subject.value)}
+                      className={`group cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                        formData.subjectCategory === subject.value
+                          ? 'border-primary shadow-2xl bg-primary/5 scale-105'
+                          : 'border-border/50 hover:border-primary/30 bg-background/50'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 bg-gradient-to-br ${subject.gradient} rounded-xl flex items-center justify-center text-white text-xl mb-4 mx-auto group-hover:scale-110 transition-transform duration-300`}>
+                        {subject.icon}
+                      </div>
+                      <h3 className="text-center font-semibold text-sm">{subject.label}</h3>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Description/Goals</Label>
+              {/* Description - Modern Textarea */}
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold">What do you want to achieve?</Label>
                 <Textarea
-                  id="description"
-                  placeholder="Describe what you want to achieve with this study plan, your learning objectives, and any specific areas of focus..."
+                  placeholder="Describe your learning goals, what you want to master, and any specific outcomes you're targeting..."
                   value={formData.description}
                   onChange={(e) => updateFormData('description', e.target.value)}
                   rows={4}
+                  className="text-base p-6 border-2 border-border/50 rounded-2xl bg-background/50 focus:bg-background focus:border-primary/50 transition-all duration-300 resize-none"
                 />
               </div>
 
-              <div className="space-y-3">
-                <Label>Priority Level *</Label>
-                <RadioGroup value={formData.priorityLevel} onValueChange={(value) => updateFormData('priorityLevel', value)}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted">
-                      <RadioGroupItem value="low" id="low" />
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-5 w-5 text-blue-500" />
-                        <div>
-                          <Label htmlFor="low" className="cursor-pointer font-medium">Low Priority</Label>
-                          <p className="text-sm text-muted-foreground">Flexible timeline, casual learning</p>
+              {/* Priority Level - Enhanced Cards */}
+              <div className="space-y-6">
+                <Label className="text-lg font-semibold">How important is this to you?</Label>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {[
+                    { 
+                      value: 'low', 
+                      title: 'Take My Time', 
+                      desc: 'Flexible learning pace',
+                      icon: Clock, 
+                      gradient: 'from-blue-500 to-cyan-500',
+                      bg: 'from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20'
+                    },
+                    { 
+                      value: 'medium', 
+                      title: 'Stay Focused', 
+                      desc: 'Consistent progress needed',
+                      icon: Target, 
+                      gradient: 'from-amber-500 to-orange-500',
+                      bg: 'from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20'
+                    },
+                    { 
+                      value: 'high', 
+                      title: 'Make It Happen', 
+                      desc: 'Urgent deadline ahead',
+                      icon: Star, 
+                      gradient: 'from-red-500 to-pink-500',
+                      bg: 'from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20'
+                    }
+                  ].map((priority) => (
+                    <div
+                      key={priority.value}
+                      onClick={() => updateFormData('priorityLevel', priority.value)}
+                      className={`group cursor-pointer p-8 rounded-2xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                        formData.priorityLevel === priority.value
+                          ? 'border-primary shadow-2xl scale-105'
+                          : 'border-border/50 hover:border-primary/30'
+                      }`}
+                    >
+                      <div className={`bg-gradient-to-br ${priority.bg} rounded-2xl p-6 mb-6`}>
+                        <div className={`w-16 h-16 bg-gradient-to-br ${priority.gradient} rounded-2xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300`}>
+                          <priority.icon className="h-8 w-8 text-white" />
                         </div>
+                        <h3 className="text-xl font-bold text-center mb-2">{priority.title}</h3>
+                        <p className="text-muted-foreground text-center">{priority.desc}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted">
-                      <RadioGroupItem value="medium" id="medium" />
-                      <div className="flex items-center space-x-2">
-                        <Target className="h-5 w-5 text-amber-500" />
-                        <div>
-                          <Label htmlFor="medium" className="cursor-pointer font-medium">Medium Priority</Label>
-                          <p className="text-sm text-muted-foreground">Important goals, regular schedule</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted">
-                      <RadioGroupItem value="high" id="high" />
-                      <div className="flex items-center space-x-2">
-                        <Star className="h-5 w-5 text-red-500" />
-                        <div>
-                          <Label htmlFor="high" className="cursor-pointer font-medium">High Priority</Label>
-                          <p className="text-sm text-muted-foreground">Urgent deadlines, intensive study</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </RadioGroup>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -313,79 +350,126 @@ const CreateStudyPlan = () => {
 
       case 2:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <Calendar className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Timeline Setup</h2>
-              <p className="text-muted-foreground">Configure your study schedule and timeline</p>
+          <div className="space-y-8">
+            <div className="text-center mb-12">
+              <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <Calendar className="h-10 w-10 text-white" />
+              </div>
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent">
+                Plan Your Timeline
+              </h2>
+              <p className="text-lg text-muted-foreground">Set up your perfect study schedule</p>
             </div>
 
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="targetDate">Target Completion Date *</Label>
-                  <Input
-                    id="targetDate"
-                    type="date"
-                    value={formData.targetDate}
-                    onChange={(e) => updateFormData('targetDate', e.target.value)}
+            <div className="space-y-8">
+              {/* Target Date & Buffer Time */}
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <Label className="text-lg font-semibold">When do you want to finish?</Label>
+                  <div className="relative">
+                    <Input
+                      type="date"
+                      value={formData.targetDate}
+                      onChange={(e) => updateFormData('targetDate', e.target.value)}
+                      className="text-lg py-6 px-6 border-2 border-border/50 rounded-2xl bg-background/50 focus:bg-background focus:border-primary/50 transition-all duration-300"
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      <Target className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-lg font-semibold">Buffer time for reviews</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { value: '15', label: '15 min', icon: '⚡' },
+                      { value: '30', label: '30 min', icon: '🔥' },
+                      { value: '45', label: '45 min', icon: '💪' },
+                      { value: '60', label: '1 hour', icon: '🚀' }
+                    ].map((buffer) => (
+                      <div
+                        key={buffer.value}
+                        onClick={() => updateFormData('bufferTime', buffer.value)}
+                        className={`cursor-pointer p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 text-center ${
+                          formData.bufferTime === buffer.value
+                            ? 'border-primary shadow-lg bg-primary/5 scale-105'
+                            : 'border-border/50 hover:border-primary/30 bg-background/50'
+                        }`}
+                      >
+                        <div className="text-2xl mb-2">{buffer.icon}</div>
+                        <div className="font-semibold text-sm">{buffer.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Study Hours Slider */}
+              <div className="space-y-6">
+                <Label className="text-lg font-semibold">How many hours can you study daily?</Label>
+                <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-8 border-2 border-primary/10">
+                  <div className="text-center mb-6">
+                    <div className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      {formData.studyHoursPerDay[0]} {formData.studyHoursPerDay[0] === 1 ? 'hour' : 'hours'}
+                    </div>
+                    <p className="text-muted-foreground mt-2">per day</p>
+                  </div>
+                  
+                  <Slider
+                    value={formData.studyHoursPerDay}
+                    onValueChange={(value) => updateFormData('studyHoursPerDay', value)}
+                    max={12}
+                    min={0.5}
+                    step={0.5}
+                    className="w-full"
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bufferTime">Buffer Time for Reviews (minutes)</Label>
-                  <Select value={formData.bufferTime} onValueChange={(value) => updateFormData('bufferTime', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="15">15 minutes</SelectItem>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="45">45 minutes</SelectItem>
-                      <SelectItem value="60">1 hour</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  
+                  <div className="flex justify-between text-sm text-muted-foreground mt-4">
+                    <span>30 min</span>
+                    <span>3 hours</span>
+                    <span>6 hours</span>
+                    <span>12 hours</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <Label>Available Study Hours Per Day: {formData.studyHoursPerDay[0]} hours</Label>
-                <Slider
-                  value={formData.studyHoursPerDay}
-                  onValueChange={(value) => updateFormData('studyHoursPerDay', value)}
-                  max={12}
-                  min={0.5}
-                  step={0.5}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>30 min</span>
-                  <span>6 hours</span>
-                  <span>12 hours</span>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <Label>Preferred Study Times *</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {/* Preferred Study Times */}
+              <div className="space-y-6">
+                <Label className="text-lg font-semibold">When do you learn best?</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[
-                    'Early Morning (6-9 AM)',
-                    'Morning (9-12 PM)',
-                    'Afternoon (12-3 PM)',
-                    'Late Afternoon (3-6 PM)',
-                    'Evening (6-9 PM)',
-                    'Night (9-12 AM)'
-                  ].map((time) => (
-                    <div key={time} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={time}
-                        checked={formData.preferredTimes.includes(time)}
-                        onCheckedChange={() => toggleArrayItem('preferredTimes', time)}
-                      />
-                      <Label htmlFor={time} className="text-sm cursor-pointer">{time}</Label>
+                    { time: 'Early Morning (6-9 AM)', icon: '🌅', gradient: 'from-amber-400 to-orange-500' },
+                    { time: 'Morning (9-12 PM)', icon: '☀️', gradient: 'from-yellow-400 to-amber-500' },
+                    { time: 'Afternoon (12-3 PM)', icon: '🌞', gradient: 'from-orange-400 to-red-500' },
+                    { time: 'Late Afternoon (3-6 PM)', icon: '🌇', gradient: 'from-red-400 to-pink-500' },
+                    { time: 'Evening (6-9 PM)', icon: '🌆', gradient: 'from-purple-400 to-indigo-500' },
+                    { time: 'Night (9-12 AM)', icon: '🌙', gradient: 'from-indigo-400 to-blue-500' }
+                  ].map((timeSlot) => (
+                    <div
+                      key={timeSlot.time}
+                      onClick={() => toggleArrayItem('preferredTimes', timeSlot.time)}
+                      className={`group cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                        formData.preferredTimes.includes(timeSlot.time)
+                          ? 'border-primary shadow-2xl bg-primary/5 scale-105'
+                          : 'border-border/50 hover:border-primary/30 bg-background/50'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 bg-gradient-to-br ${timeSlot.gradient} rounded-xl flex items-center justify-center text-white text-xl mb-4 mx-auto group-hover:scale-110 transition-transform duration-300`}>
+                        {timeSlot.icon}
+                      </div>
+                      <h3 className="text-center font-semibold text-sm leading-tight">{timeSlot.time}</h3>
                     </div>
                   ))}
                 </div>
+                
+                {formData.preferredTimes.length > 0 && (
+                  <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl dark:bg-emerald-900/20 dark:border-emerald-800">
+                    <p className="text-sm text-emerald-700 dark:text-emerald-400 text-center">
+                      ✨ You selected {formData.preferredTimes.length} time slot{formData.preferredTimes.length > 1 ? 's' : ''} - great choice!
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
