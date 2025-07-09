@@ -31,39 +31,19 @@ import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-const CircularProgress = ({ progress }: { progress: number }) => {
-  const radius = 32;
-  const strokeWidth = 4;
-  const normalizedRadius = radius - strokeWidth * 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
-
+const ModernProgressBar = ({ progress }: { progress: number }) => {
   return (
-    <div className="relative w-20 h-20">
-      <svg height={radius * 2} width={radius * 2} className="transform -rotate-90">
-        <circle
-          stroke="hsl(var(--muted))"
-          fill="transparent"
-          strokeWidth={strokeWidth}
-          r={normalizedRadius}
-          cx={radius}
-          cy={radius}
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-sm">
+        <span className="font-medium text-foreground">{progress}% Complete</span>
+        <span className="text-xs text-muted-foreground">Goal: 100%</span>
+      </div>
+      <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+        <div 
+          className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary via-primary/80 to-secondary rounded-full transition-all duration-700 ease-out"
+          style={{ width: `${progress}%` }}
         />
-        <circle
-          stroke="hsl(var(--primary))"
-          fill="transparent"
-          strokeWidth={strokeWidth}
-          strokeDasharray={circumference + ' ' + circumference}
-          style={{ strokeDashoffset }}
-          strokeLinecap="round"
-          r={normalizedRadius}
-          cx={radius}
-          cy={radius}
-          className="transition-all duration-500 ease-in-out"
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-sm font-bold text-primary">{progress}%</span>
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full animate-pulse" />
       </div>
     </div>
   );
@@ -427,81 +407,118 @@ const StudyPlans = () => {
         {/* Study Plans Grid */}
         <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           {filteredPlans.map((plan) => (
-            <Card key={plan.id} className="group hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/20">
-              <CardHeader className="space-y-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
-                      {plan.title}
-                    </CardTitle>
-                    <CardDescription className="flex items-center gap-2 text-base">
-                      <BookOpen className="h-4 w-4" />
-                      {plan.subject}
-                    </CardDescription>
+            <div key={plan.id} className="group relative">
+              {/* Status Indicator */}
+              <div className="absolute -top-2 -right-2 z-10">
+                <Badge className={getStatusColor(plan.status)} variant="outline">
+                  {plan.status}
+                </Badge>
+              </div>
+              
+              <Card className="overflow-hidden border-0 shadow-md hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-background via-background to-primary/5 group-hover:to-primary/10">
+                {/* Header Section with Gradient */}
+                <div className="relative p-6 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                        {plan.title}
+                      </h3>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <BookOpen className="h-4 w-4" />
+                        <span className="font-medium">{plan.subject}</span>
+                      </div>
+                    </div>
+                    <Badge className={getDifficultyColor(plan.difficulty)} variant="outline">
+                      {plan.difficulty}
+                    </Badge>
                   </div>
-                  <CircularProgress progress={plan.progress} />
+                  
+                  {/* Modern Progress Bar */}
+                  <ModernProgressBar progress={plan.progress} />
                 </div>
 
-                <div className="flex gap-2">
-                  <Badge className={getDifficultyColor(plan.difficulty)} variant="outline">
-                    {plan.difficulty}
-                  </Badge>
-                  <Badge className={getStatusColor(plan.status)} variant="outline">
-                    {plan.status}
-                  </Badge>
-                </div>
-              </CardHeader>
+                {/* Content Section */}
+                <CardContent className="p-6 space-y-4">
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Target className="h-3 w-3" />
+                        <span>Target Date</span>
+                      </div>
+                      <p className="font-semibold text-sm">
+                        {new Date(plan.targetDate).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        <span>Daily Goal</span>
+                      </div>
+                      <p className="font-semibold text-sm">{plan.dailyTime} minutes</p>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <TrendingUp className="h-3 w-3" />
+                        <span>Sessions</span>
+                      </div>
+                      <p className="font-semibold text-sm">{plan.totalSessions} completed</p>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <BookOpen className="h-3 w-3" />
+                        <span>Topics</span>
+                      </div>
+                      <p className="font-semibold text-sm">{plan.completedTopics}/{plan.totalTopics}</p>
+                    </div>
+                  </div>
 
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Target className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">Target:</span>
+                  {/* Last Activity */}
+                  <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Last studied</span>
+                      <span className="text-xs font-medium">{plan.lastStudied}</span>
+                    </div>
                   </div>
-                  <span className="font-medium">{new Date(plan.targetDate).toLocaleDateString()}</span>
                   
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">Daily:</span>
-                  </div>
-                  <span className="font-medium">{plan.dailyTime} min</span>
-                  
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">Sessions:</span>
-                  </div>
-                  <span className="font-medium">{plan.totalSessions}</span>
-                  
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">Topics:</span>
-                  </div>
-                  <span className="font-medium">{plan.completedTopics}/{plan.totalTopics}</span>
-                </div>
-
-                <div className="pt-2 border-t border-border/50">
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Last studied: {plan.lastStudied}
-                  </p>
-                  
-                  <div className="flex gap-2">
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2">
                     {plan.status === 'active' && (
-                      <Button size="sm" className="flex-1">
-                        <Play className="h-3 w-3 mr-1" />
+                      <Button size="sm" className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:shadow-md">
+                        <Play className="h-3 w-3 mr-2" />
                         Continue
                       </Button>
                     )}
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Edit className="h-3 w-3 mr-1" />
-                      Edit
+                    {plan.status === 'completed' && (
+                      <Button size="sm" variant="outline" className="flex-1 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+                        <Target className="h-3 w-3 mr-2" />
+                        Completed
+                      </Button>
+                    )}
+                    {plan.status === 'paused' && (
+                      <Button size="sm" variant="outline" className="flex-1 border-amber-200 text-amber-700 hover:bg-amber-50">
+                        <Play className="h-3 w-3 mr-2" />
+                        Resume
+                      </Button>
+                    )}
+                    
+                    <Button size="sm" variant="outline" className="hover:bg-muted/50">
+                      <Edit className="h-3 w-3" />
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="hover:bg-muted/50">
                       <Archive className="h-3 w-3" />
                     </Button>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </div>
 
