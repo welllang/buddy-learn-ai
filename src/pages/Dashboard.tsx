@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -127,50 +128,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar Navigation */}
-      <div className={`${sidebarCollapsed ? 'w-16' : 'w-64'} border-r bg-background/95 backdrop-blur transition-all duration-300 flex flex-col`}>
-        {/* Logo */}
-        <div className="h-16 flex items-center px-4 border-b">
-          <Link to="/dashboard" className="flex items-center space-x-2">
-            <Brain className="h-6 w-6 text-primary" />
-            {!sidebarCollapsed && <span className="text-lg font-semibold">StudyBuddy AI</span>}
-          </Link>
-        </div>
-
-        {/* Navigation Items */}
-        <nav className="flex-1 p-4">
-          <div className="space-y-2">
-            {sidebarItems.map((item) => (
-              <Link key={item.path} to={item.path}>
-                <Button
-                  variant={location.pathname === item.path ? "default" : "ghost"}
-                  className={`w-full justify-start ${sidebarCollapsed ? 'px-2' : 'px-3'}`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {!sidebarCollapsed && <span className="ml-2">{item.label}</span>}
-                </Button>
-              </Link>
-            ))}
-          </div>
-        </nav>
-
-        {/* Collapse Toggle */}
-        <div className="p-4 border-t">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="w-full"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-            {!sidebarCollapsed && <span className="ml-2">Collapse</span>}
-          </Button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-background">
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="h-16 border-b bg-background/95 backdrop-blur sticky top-0 z-40">
           <div className="h-full px-6 flex items-center justify-between">
@@ -559,15 +521,16 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+        </div>
 
-      {/* AI Assistant */}
-      <AIAssistant 
-        isOpen={isAIAssistantOpen}
-        onClose={() => setIsAIAssistantOpen(false)}
-        context="Dashboard - Current study session and progress overview"
-      />
-    </div>
+        {/* AI Assistant */}
+        <AIAssistant 
+          isOpen={isAIAssistantOpen}
+          onClose={() => setIsAIAssistantOpen(false)}
+          context="Dashboard - Current study session and progress overview"
+        />
+      </div>
+    </>
   );
 };
 

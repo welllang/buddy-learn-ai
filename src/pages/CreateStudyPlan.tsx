@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1215,34 +1216,9 @@ const CreateStudyPlan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur sticky top-0 z-40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link to="/dashboard" className="flex items-center space-x-2">
-              <Brain className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">StudyBuddy AI</span>
-            </Link>
-            <nav className="hidden md:flex items-center space-x-1">
-              <Button variant="ghost" asChild>
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-              <Button variant="ghost" className="bg-primary/10 text-primary" asChild>
-                <Link to="/study-plans">Study Plans</Link>
-              </Button>
-              <Button variant="ghost">Schedule</Button>
-              <Button variant="ghost">Progress</Button>
-              <Button variant="ghost">Goals</Button>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-primary">JS</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-background">
 
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
@@ -1318,6 +1294,7 @@ const CreateStudyPlan = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -151,7 +152,9 @@ const Goals = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-background p-6">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -493,8 +496,9 @@ const Goals = () => {
             </Card>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

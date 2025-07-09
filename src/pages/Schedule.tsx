@@ -60,6 +60,7 @@ import {
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import Navbar from "@/components/Navbar";
 
 interface StudySession {
   id: string;
@@ -438,7 +439,9 @@ const Schedule = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-6">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-6">
       <div className="container mx-auto max-w-7xl">
         {/* Modern Header */}
         <div className="flex items-center justify-between mb-12">
@@ -914,6 +917,7 @@ const Schedule = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
