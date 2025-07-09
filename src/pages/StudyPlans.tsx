@@ -420,9 +420,11 @@ const StudyPlans = () => {
                 <div className="relative p-6 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
-                        {plan.title}
-                      </h3>
+                      <Link to={`/study-plans/${plan.id}`} className="block">
+                        <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300 cursor-pointer">
+                          {plan.title}
+                        </h3>
+                      </Link>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <BookOpen className="h-4 w-4" />
                         <span className="font-medium">{plan.subject}</span>
@@ -491,21 +493,27 @@ const StudyPlans = () => {
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-2">
                     {plan.status === 'active' && (
-                      <Button size="sm" className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:shadow-md">
-                        <Play className="h-3 w-3 mr-2" />
-                        Continue
+                      <Button size="sm" className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:shadow-md" asChild>
+                        <Link to={`/study-plans/${plan.id}`}>
+                          <Play className="h-3 w-3 mr-2" />
+                          Continue
+                        </Link>
                       </Button>
                     )}
                     {plan.status === 'completed' && (
-                      <Button size="sm" variant="outline" className="flex-1 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-                        <Target className="h-3 w-3 mr-2" />
-                        Completed
+                      <Button size="sm" variant="outline" className="flex-1 border-emerald-200 text-emerald-700 hover:bg-emerald-50" asChild>
+                        <Link to={`/study-plans/${plan.id}`}>
+                          <Target className="h-3 w-3 mr-2" />
+                          View Details
+                        </Link>
                       </Button>
                     )}
                     {plan.status === 'paused' && (
-                      <Button size="sm" variant="outline" className="flex-1 border-amber-200 text-amber-700 hover:bg-amber-50">
-                        <Play className="h-3 w-3 mr-2" />
-                        Resume
+                      <Button size="sm" variant="outline" className="flex-1 border-amber-200 text-amber-700 hover:bg-amber-50" asChild>
+                        <Link to={`/study-plans/${plan.id}`}>
+                          <Play className="h-3 w-3 mr-2" />
+                          Resume
+                        </Link>
                       </Button>
                     )}
                     
