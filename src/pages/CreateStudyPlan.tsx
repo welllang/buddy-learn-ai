@@ -941,147 +941,269 @@ const CreateStudyPlan = () => {
 
       case 5:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <CheckCircle className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Review & Create</h2>
-              <p className="text-muted-foreground">Review your study plan before generating</p>
+          <div className="space-y-8">
+            <div className="text-center mb-12">
+              <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <CheckCircle className="h-10 w-10 text-white" />
+              </div>
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                Almost There!
+              </h2>
+              <p className="text-lg text-muted-foreground">Review your personalized study plan and let AI work its magic</p>
             </div>
 
-            <div className="space-y-6">
-              {/* Plan Summary */}
-              <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
-                <CardHeader>
-                  <CardTitle>Plan Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-semibold mb-2">Basic Information</h4>
-                      <div className="space-y-1 text-sm">
-                        <p><strong>Name:</strong> {formData.planName}</p>
-                        <p><strong>Subject:</strong> {formData.subjectCategory}</p>
-                        <p><strong>Priority:</strong> {formData.priorityLevel}</p>
-                      </div>
+            <div className="space-y-8">
+              {/* Plan Overview Cards */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Basic Information Card */}
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                  <div className="relative p-8 border-2 border-border/50 rounded-2xl bg-background/80 backdrop-blur-sm hover:border-primary/50 transition-all duration-300">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <BookOpen className="h-8 w-8 text-white" />
                     </div>
-                    
-                    <div>
-                      <h4 className="font-semibold mb-2">Timeline</h4>
-                      <div className="space-y-1 text-sm">
-                        <p><strong>Target Date:</strong> {formData.targetDate ? new Date(formData.targetDate).toLocaleDateString() : 'Not set'}</p>
-                        <p><strong>Daily Hours:</strong> {formData.studyHoursPerDay[0]} hours</p>
-                        <p><strong>Preferred Times:</strong> {formData.preferredTimes.length} slots</p>
+                    <h3 className="text-xl font-bold mb-4">Plan Details</h3>
+                    <div className="space-y-3">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Name</span>
+                        <span className="font-semibold text-sm truncate">{formData.planName || 'Not set'}</span>
                       </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold mb-2">Content</h4>
-                      <div className="space-y-1 text-sm">
-                        <p><strong>Files:</strong> {formData.uploadedFiles.length} uploaded</p>
-                        <p><strong>Videos:</strong> {formData.youtubeLinks.length} links</p>
-                        <p><strong>Topics:</strong> {formData.manualTopics.length} manual entries</p>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Subject</span>
+                        <span className="font-semibold text-sm capitalize">{formData.subjectCategory || 'Not set'}</span>
                       </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold mb-2">AI Configuration</h4>
-                      <div className="space-y-1 text-sm">
-                        <p><strong>Style:</strong> {formData.studyStyle}</p>
-                        <p><strong>Level:</strong> {formData.difficultyLevel}</p>
-                        <p><strong>Reviews:</strong> {formData.reviewFrequency}</p>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Priority</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-semibold text-sm capitalize">{formData.priorityLevel || 'Not set'}</span>
+                          {formData.priorityLevel === 'high' && <span className="text-red-500">🔥</span>}
+                          {formData.priorityLevel === 'medium' && <span className="text-yellow-500">⭐</span>}
+                          {formData.priorityLevel === 'low' && <span className="text-blue-500">🕒</span>}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Timeline Visualization */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Timeline Visualization
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Estimated Duration</span>
-                      <span className="text-sm">
+                {/* Timeline Card */}
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                  <div className="relative p-8 border-2 border-border/50 rounded-2xl bg-background/80 backdrop-blur-sm hover:border-primary/50 transition-all duration-300">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Calendar className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-4">Timeline</h3>
+                    <div className="space-y-3">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Target Date</span>
+                        <span className="font-semibold text-sm">
+                          {formData.targetDate ? new Date(formData.targetDate).toLocaleDateString() : 'Not set'}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Daily Hours</span>
+                        <span className="font-semibold text-sm">{formData.studyHoursPerDay[0]} hours/day</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Time Slots</span>
+                        <span className="font-semibold text-sm">{formData.preferredTimes.length} selected</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Total Days</span>
+                        <span className="font-semibold text-sm text-primary">
+                          {formData.targetDate ? 
+                            Math.ceil((new Date(formData.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) 
+                            : 0} days
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content Card */}
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                  <div className="relative p-8 border-2 border-border/50 rounded-2xl bg-background/80 backdrop-blur-sm hover:border-primary/50 transition-all duration-300">
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Upload className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-4">Content</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Documents</span>
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-sm">{formData.uploadedFiles.length}</span>
+                          <FileText className="h-4 w-4 text-blue-500" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Videos</span>
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-sm">{formData.youtubeLinks.length}</span>
+                          <Video className="h-4 w-4 text-red-500" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Manual Topics</span>
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-sm">{formData.manualTopics.length}</span>
+                          <Lightbulb className="h-4 w-4 text-yellow-500" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">LMS Files</span>
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-sm">{formData.lmsFiles.length}</span>
+                          <BookOpen className="h-4 w-4 text-green-500" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Configuration Card */}
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-purple-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                  <div className="relative p-8 border-2 border-border/50 rounded-2xl bg-background/80 backdrop-blur-sm hover:border-primary/50 transition-all duration-300">
+                    <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <Brain className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-4">AI Setup</h3>
+                    <div className="space-y-3">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Learning Style</span>
+                        <span className="font-semibold text-sm capitalize">{formData.studyStyle || 'Not set'}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Difficulty</span>
+                        <span className="font-semibold text-sm capitalize">{formData.difficultyLevel || 'Not set'}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Reviews</span>
+                        <span className="font-semibold text-sm capitalize">{formData.reviewFrequency || 'Not set'}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide">Assessments</span>
+                        <span className="font-semibold text-sm">{formData.assessmentPreferences.length} types</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Study Plan Preview */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                <div className="relative p-10 border-2 border-primary/20 rounded-3xl bg-gradient-to-br from-background/95 to-primary/5 backdrop-blur-xl">
+                  <div className="text-center mb-8">
+                    <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <BarChart3 className="h-12 w-12 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">Your Study Plan Preview</h3>
+                    <p className="text-muted-foreground">AI will create a personalized timeline optimized for your success</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-8 mb-8">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-primary mb-2">
                         {formData.targetDate ? 
                           Math.ceil((new Date(formData.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) 
-                          : 0} days
-                      </span>
+                          : 0}
+                      </div>
+                      <div className="text-sm text-muted-foreground uppercase tracking-wide">Days to Master</div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Total Study Hours</span>
-                      <span className="text-sm">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-secondary mb-2">
                         {formData.targetDate ? 
                           (Math.ceil((new Date(formData.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) * formData.studyHoursPerDay[0]).toFixed(0)
-                          : 0} hours
-                      </span>
+                          : 0}
+                      </div>
+                      <div className="text-sm text-muted-foreground uppercase tracking-wide">Total Hours</div>
                     </div>
-                    <div className="w-full bg-muted rounded-full h-4">
-                      <div className="bg-gradient-to-r from-primary to-secondary h-4 rounded-full w-0 animate-pulse"></div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+                        {formData.uploadedFiles.length + formData.youtubeLinks.length + formData.manualTopics.length + formData.lmsFiles.length}
+                      </div>
+                      <div className="text-sm text-muted-foreground uppercase tracking-wide">Learning Resources</div>
                     </div>
-                    <p className="text-xs text-muted-foreground text-center">
-                      AI will optimize this timeline based on your preferences
+                  </div>
+
+                  {/* Progress Visualization */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Plan Completeness</span>
+                      <span className="text-sm text-primary font-semibold">95%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+                      <div className="bg-gradient-to-r from-primary via-secondary to-primary h-3 rounded-full w-[95%] animate-pulse"></div>
+                    </div>
+                    <p className="text-xs text-muted-foreground text-center italic">
+                      ✨ AI is ready to create your optimal learning path
                     </p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              {/* Edit Previous Steps */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Need to make changes?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {/* Quick Edit Navigation */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-500/10 to-gray-500/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                <div className="relative p-8 border-2 border-border/50 rounded-2xl bg-background/80 backdrop-blur-sm">
+                  <h3 className="text-xl font-bold mb-6 text-center">Need to make changes?</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                      { step: 1, label: "Basic Info", icon: BookOpen },
-                      { step: 2, label: "Timeline", icon: Calendar },
-                      { step: 3, label: "Content", icon: Upload },
-                      { step: 4, label: "AI Config", icon: Brain }
-                    ].map(({ step, label, icon: Icon }) => (
-                      <Button
+                      { step: 1, label: "Basic Info", icon: BookOpen, color: 'from-blue-500 to-purple-600' },
+                      { step: 2, label: "Timeline", icon: Calendar, color: 'from-emerald-500 to-teal-600' },
+                      { step: 3, label: "Content", icon: Upload, color: 'from-orange-500 to-red-600' },
+                      { step: 4, label: "AI Config", icon: Brain, color: 'from-violet-500 to-purple-600' }
+                    ].map(({ step, label, icon: Icon, color }) => (
+                      <button
                         key={step}
-                        variant="outline"
-                        size="sm"
                         onClick={() => setCurrentStep(step)}
-                        className="flex items-center gap-2"
+                        className="group/btn p-6 border-2 border-border/50 rounded-2xl hover:border-primary/50 transition-all duration-300 hover:scale-105 hover:shadow-xl bg-background/50 hover:bg-background"
                       >
-                        <Icon className="h-4 w-4" />
-                        {label}
-                      </Button>
+                        <div className={`w-12 h-12 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover/btn:scale-110 transition-transform duration-300`}>
+                          <Icon className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="text-sm font-semibold text-center">{label}</div>
+                      </button>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Generate Button */}
-              <div className="text-center">
-                <Button
-                  size="lg"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg px-8 py-4"
-                >
-                  {isLoading ? (
-                    <>
-                      <Timer className="h-5 w-5 mr-2 animate-spin" />
-                      Generating AI Study Plan...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="h-5 w-5 mr-2" />
-                      Generate Study Plan
-                    </>
-                  )}
-                </Button>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This may take a few moments while AI analyzes your content
-                </p>
+              <div className="text-center space-y-6">
+                <div className="relative inline-block">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-3xl blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                  <Button
+                    size="lg"
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className="relative px-12 py-6 text-lg font-bold bg-gradient-to-r from-primary to-secondary hover:shadow-2xl hover:scale-105 transition-all duration-300 rounded-3xl"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin mr-3"></div>
+                        Generating Your AI Study Plan...
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mr-3">
+                          <Zap className="h-5 w-5 text-white" />
+                        </div>
+                        Generate My Study Plan
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground">
+                    🤖 AI is analyzing your content and preferences
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    This may take a few moments to create your personalized learning experience
+                  </p>
+                </div>
               </div>
             </div>
           </div>
