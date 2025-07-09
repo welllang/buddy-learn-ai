@@ -366,15 +366,18 @@ const CreateStudyPlan = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <Label className="text-lg font-semibold">When do you want to finish?</Label>
-                  <div className="relative">
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
                     <Input
                       type="date"
                       value={formData.targetDate}
                       onChange={(e) => updateFormData('targetDate', e.target.value)}
-                      className="text-lg py-6 px-6 border-2 border-border/50 rounded-2xl bg-background/50 focus:bg-background focus:border-primary/50 transition-all duration-300"
+                      className="relative text-lg py-8 px-6 border-2 border-border/50 rounded-2xl bg-background/80 backdrop-blur-sm focus:bg-background focus:border-primary/50 transition-all duration-300 hover:border-primary/30 hover:shadow-xl [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-4 [&::-webkit-calendar-picker-indicator]:w-6 [&::-webkit-calendar-picker-indicator]:h-6 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                      <Target className="h-5 w-5 text-muted-foreground" />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Calendar className="h-6 w-6 text-primary" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -477,29 +480,42 @@ const CreateStudyPlan = () => {
 
       case 3:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Content Upload</h2>
-              <p className="text-muted-foreground">Add your study materials and resources</p>
+          <div className="space-y-8">
+            <div className="text-center mb-12">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 via-red-500 to-pink-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <Upload className="h-10 w-10 text-white" />
+              </div>
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
+                Upload Your Content
+              </h2>
+              <p className="text-lg text-muted-foreground">Add materials that will fuel your learning journey</p>
             </div>
 
             <div className="space-y-8">
-              {/* PDF Upload Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Upload PDFs, Notes & Textbooks
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                      <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <Label htmlFor="file-upload" className="cursor-pointer">
-                        <span className="text-sm font-medium">Click to upload files</span>
-                        <span className="text-sm text-muted-foreground block">or drag and drop</span>
+              {/* Upload Options Grid */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* PDF Upload */}
+                <div className="group space-y-6">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">Documents & PDFs</h3>
+                      <p className="text-muted-foreground">Upload textbooks, notes, research papers</p>
+                    </div>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                    <div className="relative border-2 border-dashed border-border/50 rounded-2xl p-8 text-center transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 bg-background/80 backdrop-blur-sm">
+                      <Label htmlFor="file-upload" className="cursor-pointer block">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                          <Upload className="h-8 w-8 text-primary" />
+                        </div>
+                        <span className="text-lg font-semibold block mb-2">Click to upload files</span>
+                        <span className="text-muted-foreground">or drag and drop</span>
+                        <div className="text-xs text-muted-foreground mt-2">PDF, DOC, DOCX, TXT</div>
                       </Label>
                       <Input
                         id="file-upload"
@@ -510,58 +526,89 @@ const CreateStudyPlan = () => {
                         onChange={(e) => handleFileUpload(e.target.files, 'uploadedFiles')}
                       />
                     </div>
-                    
-                    {formData.uploadedFiles.length > 0 && (
-                      <div className="space-y-2">
-                        {formData.uploadedFiles.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 border rounded">
-                            <span className="text-sm">{file.name}</span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => removeFile(index, 'uploadedFiles')}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  {formData.uploadedFiles.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-muted-foreground">Uploaded Files</span>
+                        <Badge variant="secondary">{formData.uploadedFiles.length}</Badge>
+                      </div>
+                      {formData.uploadedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-4 border border-border/50 rounded-xl bg-background/50 hover:bg-background transition-colors">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                              <FileText className="h-4 w-4 text-blue-600" />
+                            </div>
+                            <span className="text-sm font-medium truncate">{file.name}</span>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile(index, 'uploadedFiles')}
+                            className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              {/* YouTube Links Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Video className="h-5 w-5" />
-                    YouTube Video Links
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+                {/* Video Links */}
+                <div className="group space-y-6">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
+                      <Video className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">Video Content</h3>
+                      <p className="text-muted-foreground">Add YouTube lectures and tutorials</p>
+                    </div>
+                  </div>
+                  
                   <div className="space-y-4">
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="https://youtube.com/watch?v=..."
-                        value={newYoutubeLink}
-                        onChange={(e) => setNewYoutubeLink(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addYoutubeLink()}
-                      />
-                      <Button onClick={addYoutubeLink}>
-                        <Plus className="h-4 w-4" />
+                    <div className="flex gap-3">
+                      <div className="flex-1 relative">
+                        <Input
+                          placeholder="https://youtube.com/watch?v=..."
+                          value={newYoutubeLink}
+                          onChange={(e) => setNewYoutubeLink(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && addYoutubeLink()}
+                          className="text-base py-4 px-6 border-2 border-border/50 rounded-2xl bg-background/50 focus:bg-background focus:border-primary/50 transition-all duration-300"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <LinkIcon className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={addYoutubeLink}
+                        className="px-6 py-4 rounded-2xl bg-gradient-to-r from-red-500 to-pink-600 hover:shadow-lg hover:scale-105 transition-all duration-300"
+                      >
+                        <Plus className="h-5 w-5" />
                       </Button>
                     </div>
                     
                     {formData.youtubeLinks.length > 0 && (
-                      <div className="space-y-2">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-muted-foreground">Video Links</span>
+                          <Badge variant="secondary">{formData.youtubeLinks.length}</Badge>
+                        </div>
                         {formData.youtubeLinks.map((link, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 border rounded">
-                            <span className="text-sm truncate">{link}</span>
+                          <div key={index} className="flex items-center justify-between p-4 border border-border/50 rounded-xl bg-background/50 hover:bg-background transition-colors">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
+                                <Video className="h-4 w-4 text-red-600" />
+                              </div>
+                              <span className="text-sm font-medium truncate max-w-60">{link}</span>
+                            </div>
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={() => removeYoutubeLink(index)}
+                              className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -570,190 +617,323 @@ const CreateStudyPlan = () => {
                       </div>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              {/* LMS Import Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="h-5 w-5" />
-                    Import from LMS
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                    <BookOpen className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <Label htmlFor="lms-upload" className="cursor-pointer">
-                      <span className="text-sm font-medium">Upload LMS exports</span>
-                      <span className="text-sm text-muted-foreground block">Canvas, Moodle, Blackboard files</span>
-                    </Label>
-                    <Input
-                      id="lms-upload"
-                      type="file"
-                      multiple
-                      accept=".zip,.csv,.json"
-                      className="hidden"
-                      onChange={(e) => handleFileUpload(e.target.files, 'lmsFiles')}
-                    />
+              {/* LMS Import & Manual Topics */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* LMS Import */}
+                <div className="group space-y-6">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                      <BookOpen className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">LMS Import</h3>
+                      <p className="text-muted-foreground">Canvas, Moodle, Blackboard exports</p>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Manual Topic Entry */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Plus className="h-5 w-5" />
-                    Manual Topic Entry
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex gap-2">
+                  
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-teal-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                    <div className="relative border-2 border-dashed border-border/50 rounded-2xl p-8 text-center transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 bg-background/80 backdrop-blur-sm">
+                      <Label htmlFor="lms-upload" className="cursor-pointer block">
+                        <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-teal-600/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                          <BookOpen className="h-8 w-8 text-primary" />
+                        </div>
+                        <span className="text-lg font-semibold block mb-2">Upload LMS exports</span>
+                        <span className="text-muted-foreground">Course materials and assignments</span>
+                        <div className="text-xs text-muted-foreground mt-2">ZIP, CSV, JSON</div>
+                      </Label>
                       <Input
-                        placeholder="Enter a topic or subtopic..."
-                        value={newTopic}
-                        onChange={(e) => setNewTopic(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addTopic()}
+                        id="lms-upload"
+                        type="file"
+                        multiple
+                        accept=".zip,.csv,.json"
+                        className="hidden"
+                        onChange={(e) => handleFileUpload(e.target.files, 'lmsFiles')}
                       />
-                      <Button onClick={addTopic}>
-                        <Plus className="h-4 w-4" />
+                    </div>
+                  </div>
+                  
+                  {formData.lmsFiles.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-muted-foreground">LMS Files</span>
+                        <Badge variant="secondary">{formData.lmsFiles.length}</Badge>
+                      </div>
+                      {formData.lmsFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-4 border border-border/50 rounded-xl bg-background/50 hover:bg-background transition-colors">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                              <BookOpen className="h-4 w-4 text-green-600" />
+                            </div>
+                            <span className="text-sm font-medium truncate">{file.name}</span>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile(index, 'lmsFiles')}
+                            className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Manual Topics */}
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                      <Plus className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">Manual Topics</h3>
+                      <p className="text-muted-foreground">Add specific subjects and concepts</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="flex-1 relative">
+                        <Input
+                          placeholder="Enter a topic or subtopic..."
+                          value={newTopic}
+                          onChange={(e) => setNewTopic(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && addTopic()}
+                          className="text-base py-4 px-6 border-2 border-border/50 rounded-2xl bg-background/50 focus:bg-background focus:border-primary/50 transition-all duration-300"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <Lightbulb className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={addTopic}
+                        className="px-6 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:shadow-lg hover:scale-105 transition-all duration-300"
+                      >
+                        <Plus className="h-5 w-5" />
                       </Button>
                     </div>
                     
                     {formData.manualTopics.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {formData.manualTopics.map((topic, index) => (
-                          <Badge key={index} variant="outline" className="flex items-center gap-1">
-                            {topic}
-                            <X
-                              className="h-3 w-3 cursor-pointer"
-                              onClick={() => removeTopic(index)}
-                            />
-                          </Badge>
-                        ))}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-muted-foreground">Your Topics</span>
+                          <Badge variant="secondary">{formData.manualTopics.length}</Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                          {formData.manualTopics.map((topic, index) => (
+                            <div key={index} className="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-indigo-600/10 border border-purple-500/20 rounded-2xl hover:from-purple-500/20 hover:to-indigo-600/20 transition-all duration-300">
+                              <span className="text-sm font-medium">{topic}</span>
+                              <button
+                                onClick={() => removeTopic(index)}
+                                className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center hover:bg-red-200 transition-colors group-hover:scale-110"
+                              >
+                                <X className="h-3 w-3 text-red-600" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           </div>
         );
 
       case 4:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <Brain className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">AI Configuration</h2>
-              <p className="text-muted-foreground">Customize how AI will optimize your learning</p>
+          <div className="space-y-8">
+            <div className="text-center mb-12">
+              <div className="w-20 h-20 bg-gradient-to-br from-violet-500 via-purple-500 to-blue-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <Brain className="h-10 w-10 text-white" />
+              </div>
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">
+                AI Configuration
+              </h2>
+              <p className="text-lg text-muted-foreground">Customize how AI will optimize your learning experience</p>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <Label>Study Style Preferences *</Label>
+            <div className="space-y-10">
+              {/* Study Style Preferences */}
+              <div className="space-y-6">
+                <Label className="text-xl font-semibold">How do you learn best? *</Label>
                 <RadioGroup value={formData.studyStyle} onValueChange={(value) => updateFormData('studyStyle', value)}>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted">
-                      <RadioGroupItem value="visual" id="visual-style" />
-                      <div className="flex items-center space-x-2">
-                        <Eye className="h-5 w-5 text-blue-500" />
-                        <div>
-                          <Label htmlFor="visual-style" className="cursor-pointer font-medium">Visual Learning</Label>
-                          <p className="text-sm text-muted-foreground">Charts, diagrams, infographics</p>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {[
+                      { 
+                        value: 'visual', 
+                        title: 'Visual Learning', 
+                        desc: 'Charts, diagrams, infographics',
+                        icon: Eye, 
+                        gradient: 'from-blue-500 to-cyan-500',
+                        bg: 'from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20'
+                      },
+                      { 
+                        value: 'auditory', 
+                        title: 'Auditory Learning', 
+                        desc: 'Videos, podcasts, discussions',
+                        icon: Headphones, 
+                        gradient: 'from-purple-500 to-pink-500',
+                        bg: 'from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20'
+                      },
+                      { 
+                        value: 'kinesthetic', 
+                        title: 'Hands-on Learning', 
+                        desc: 'Practice, experiments, simulations',
+                        icon: Hand, 
+                        gradient: 'from-green-500 to-emerald-500',
+                        bg: 'from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20'
+                      },
+                      { 
+                        value: 'mixed', 
+                        title: 'Mixed Approach', 
+                        desc: 'Combination of all methods',
+                        icon: Zap, 
+                        gradient: 'from-orange-500 to-red-500',
+                        bg: 'from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20'
+                      }
+                    ].map((style) => (
+                      <div
+                        key={style.value}
+                        className={`group cursor-pointer p-8 rounded-2xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                          formData.studyStyle === style.value
+                            ? 'border-primary shadow-2xl scale-105'
+                            : 'border-border/50 hover:border-primary/30'
+                        }`}
+                        onClick={() => updateFormData('studyStyle', style.value)}
+                      >
+                        <div className={`bg-gradient-to-br ${style.bg} rounded-2xl p-6 mb-6`}>
+                          <div className="flex items-center space-x-4">
+                            <RadioGroupItem value={style.value} id={style.value} className="hidden" />
+                            <div className={`w-16 h-16 bg-gradient-to-br ${style.gradient} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                              <style.icon className="h-8 w-8 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold mb-2">{style.title}</h3>
+                              <p className="text-muted-foreground">{style.desc}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted">
-                      <RadioGroupItem value="auditory" id="auditory-style" />
-                      <div className="flex items-center space-x-2">
-                        <Headphones className="h-5 w-5 text-purple-500" />
-                        <div>
-                          <Label htmlFor="auditory-style" className="cursor-pointer font-medium">Auditory Learning</Label>
-                          <p className="text-sm text-muted-foreground">Videos, podcasts, discussions</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted">
-                      <RadioGroupItem value="kinesthetic" id="kinesthetic-style" />
-                      <div className="flex items-center space-x-2">
-                        <Hand className="h-5 w-5 text-green-500" />
-                        <div>
-                          <Label htmlFor="kinesthetic-style" className="cursor-pointer font-medium">Hands-on Learning</Label>
-                          <p className="text-sm text-muted-foreground">Practice, experiments, simulations</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted">
-                      <RadioGroupItem value="mixed" id="mixed-style" />
-                      <div className="flex items-center space-x-2">
-                        <Zap className="h-5 w-5 text-orange-500" />
-                        <div>
-                          <Label htmlFor="mixed-style" className="cursor-pointer font-medium">Mixed Approach</Label>
-                          <p className="text-sm text-muted-foreground">Combination of all methods</p>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </RadioGroup>
               </div>
 
-              <div className="space-y-2">
-                <Label>Difficulty Level *</Label>
-                <Select value={formData.difficultyLevel} onValueChange={(value) => updateFormData('difficultyLevel', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select difficulty level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">Beginner - I'm new to this subject</SelectItem>
-                    <SelectItem value="intermediate">Intermediate - I have some knowledge</SelectItem>
-                    <SelectItem value="advanced">Advanced - I'm quite experienced</SelectItem>
-                    <SelectItem value="expert">Expert - I need challenging content</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Difficulty & Frequency */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Difficulty Level */}
+                <div className="space-y-6">
+                  <Label className="text-xl font-semibold">What's your level? *</Label>
+                  <div className="space-y-4">
+                    {[
+                      { value: 'beginner', title: 'Beginner', desc: "I'm new to this subject", icon: '🌱', color: 'from-green-500 to-emerald-500' },
+                      { value: 'intermediate', title: 'Intermediate', desc: 'I have some knowledge', icon: '🚀', color: 'from-blue-500 to-cyan-500' },
+                      { value: 'advanced', title: 'Advanced', desc: "I'm quite experienced", icon: '⚡', color: 'from-purple-500 to-pink-500' },
+                      { value: 'expert', title: 'Expert', desc: 'I need challenging content', icon: '🎯', color: 'from-red-500 to-orange-500' }
+                    ].map((level) => (
+                      <div
+                        key={level.value}
+                        onClick={() => updateFormData('difficultyLevel', level.value)}
+                        className={`cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+                          formData.difficultyLevel === level.value
+                            ? 'border-primary shadow-lg bg-primary/5 scale-105'
+                            : 'border-border/50 hover:border-primary/30 bg-background/50'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className={`w-12 h-12 bg-gradient-to-br ${level.color} rounded-xl flex items-center justify-center text-white text-xl`}>
+                            {level.icon}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-lg">{level.title}</h4>
+                            <p className="text-muted-foreground text-sm">{level.desc}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Review Frequency */}
+                <div className="space-y-6">
+                  <Label className="text-xl font-semibold">Review schedule? *</Label>
+                  <div className="space-y-4">
+                    {[
+                      { value: 'daily', title: 'Daily', desc: 'Review every day', icon: '📅', color: 'from-blue-500 to-cyan-500' },
+                      { value: 'every-2-days', title: 'Every 2 Days', desc: 'Moderate frequency', icon: '🗓️', color: 'from-green-500 to-emerald-500' },
+                      { value: 'weekly', title: 'Weekly', desc: 'Once per week', icon: '📆', color: 'from-purple-500 to-pink-500' },
+                      { value: 'bi-weekly', title: 'Bi-weekly', desc: 'Every 2 weeks', icon: '🗒️', color: 'from-orange-500 to-red-500' },
+                      { value: 'adaptive', title: 'Adaptive', desc: 'Let AI decide', icon: '🤖', color: 'from-violet-500 to-purple-500' }
+                    ].map((freq) => (
+                      <div
+                        key={freq.value}
+                        onClick={() => updateFormData('reviewFrequency', freq.value)}
+                        className={`cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+                          formData.reviewFrequency === freq.value
+                            ? 'border-primary shadow-lg bg-primary/5 scale-105'
+                            : 'border-border/50 hover:border-primary/30 bg-background/50'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className={`w-12 h-12 bg-gradient-to-br ${freq.color} rounded-xl flex items-center justify-center text-white text-xl`}>
+                            {freq.icon}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-lg">{freq.title}</h4>
+                            <p className="text-muted-foreground text-sm">{freq.desc}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Review Frequency *</Label>
-                <Select value={formData.reviewFrequency} onValueChange={(value) => updateFormData('reviewFrequency', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="How often should AI schedule reviews?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="daily">Daily - Review every day</SelectItem>
-                    <SelectItem value="every-2-days">Every 2 days</SelectItem>
-                    <SelectItem value="weekly">Weekly - Once per week</SelectItem>
-                    <SelectItem value="bi-weekly">Bi-weekly - Every 2 weeks</SelectItem>
-                    <SelectItem value="adaptive">Adaptive - Let AI decide based on performance</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-4">
-                <Label>Assessment Preferences</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {/* Assessment Preferences */}
+              <div className="space-y-6">
+                <Label className="text-xl font-semibold">How do you want to be tested?</Label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {[
-                    'Multiple Choice Quizzes',
-                    'True/False Questions',
-                    'Short Answer Tests',
-                    'Essay Questions',
-                    'Practical Exercises',
-                    'Coding Challenges',
-                    'Case Studies',
-                    'Peer Reviews'
+                    { name: 'Multiple Choice Quizzes', icon: '📝', color: 'from-blue-500 to-cyan-500' },
+                    { name: 'True/False Questions', icon: '✅', color: 'from-green-500 to-emerald-500' },
+                    { name: 'Short Answer Tests', icon: '📄', color: 'from-purple-500 to-pink-500' },
+                    { name: 'Essay Questions', icon: '📖', color: 'from-orange-500 to-red-500' },
+                    { name: 'Practical Exercises', icon: '🛠️', color: 'from-yellow-500 to-orange-500' },
+                    { name: 'Coding Challenges', icon: '💻', color: 'from-indigo-500 to-purple-500' },
+                    { name: 'Case Studies', icon: '🔍', color: 'from-teal-500 to-cyan-500' },
+                    { name: 'Peer Reviews', icon: '👥', color: 'from-pink-500 to-rose-500' }
                   ].map((assessment) => (
-                    <div key={assessment} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={assessment}
-                        checked={formData.assessmentPreferences.includes(assessment)}
-                        onCheckedChange={() => toggleArrayItem('assessmentPreferences', assessment)}
-                      />
-                      <Label htmlFor={assessment} className="text-sm cursor-pointer">{assessment}</Label>
+                    <div
+                      key={assessment.name}
+                      onClick={() => toggleArrayItem('assessmentPreferences', assessment.name)}
+                      className={`group cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl text-center ${
+                        formData.assessmentPreferences.includes(assessment.name)
+                          ? 'border-primary shadow-lg bg-primary/5 scale-105'
+                          : 'border-border/50 hover:border-primary/30 bg-background/50'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 bg-gradient-to-br ${assessment.color} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 text-white text-xl`}>
+                        {assessment.icon}
+                      </div>
+                      <h4 className="font-semibold text-sm leading-tight">{assessment.name}</h4>
                     </div>
                   ))}
                 </div>
+                
+                {formData.assessmentPreferences.length > 0 && (
+                  <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl dark:bg-emerald-900/20 dark:border-emerald-800">
+                    <p className="text-sm text-emerald-700 dark:text-emerald-400 text-center">
+                      ✨ You selected {formData.assessmentPreferences.length} assessment type{formData.assessmentPreferences.length > 1 ? 's' : ''} - perfect for varied testing!
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
