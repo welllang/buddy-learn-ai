@@ -377,48 +377,58 @@ const Schedule = () => {
           ))}
         </div>
         
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-3">
           {weeklySchedule.map((day, index) => (
             <div 
               key={index} 
-              className={`min-h-[140px] border-2 rounded-2xl p-4 hover:shadow-xl transition-all duration-300 cursor-pointer ${
+              className={`h-[160px] border-2 rounded-2xl p-3 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden ${
                 day.isToday 
                   ? 'border-primary shadow-lg bg-primary/5' 
                   : 'border-border/50 hover:border-primary/30 bg-background/50'
               }`}
             >
-              <div className="text-sm font-bold mb-3 flex items-center justify-between">
-                <span className={day.isToday ? 'text-primary' : ''}>{day.date.getDate()}</span>
+              {/* Header with date */}
+              <div className="flex items-center justify-between mb-3 h-6">
+                <span className={`text-sm font-bold ${day.isToday ? 'text-primary' : 'text-foreground'}`}>
+                  {day.date.getDate()}
+                </span>
                 {day.isToday && (
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse flex-shrink-0"></div>
                 )}
               </div>
               
-              <div className="space-y-2">
-                {Array.from({ length: Math.min(day.sessions, 3) }).map((_, i) => {
+              {/* Sessions container with fixed height and scrolling */}
+              <div className="h-[80px] space-y-1.5 overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                {Array.from({ length: Math.min(day.sessions, 4) }).map((_, i) => {
                   const subjects = ['Computer Science', 'Mathematics', 'Physics', 'Chemistry'];
                   const subject = subjects[Math.floor(Math.random() * subjects.length)];
+                  const shortName = subject === 'Computer Science' ? 'CS' : 
+                                  subject === 'Mathematics' ? 'Math' : 
+                                  subject === 'Physics' ? 'Physics' : 'Chem';
                   
                   return (
                     <div
                       key={i}
-                      className={`text-xs p-2 rounded-lg bg-gradient-to-r ${subjectColors[subject as keyof typeof subjectColors]} text-white font-medium shadow-sm`}
+                      className={`text-xs px-2 py-1.5 rounded-lg bg-gradient-to-r ${subjectColors[subject as keyof typeof subjectColors]} text-white font-medium shadow-sm truncate min-h-[24px] flex items-center justify-center`}
                     >
-                      {subject.split(' ')[0]}
+                      {shortName}
                     </div>
                   );
                 })}
                 
-                {day.sessions > 3 && (
-                  <div className="text-xs text-muted-foreground text-center">
-                    +{day.sessions - 3} more
+                {day.sessions > 4 && (
+                  <div className="text-xs text-muted-foreground text-center py-1">
+                    +{day.sessions - 4} more
                   </div>
                 )}
               </div>
               
-              <div className="text-xs text-muted-foreground mt-3 flex items-center justify-between">
-                <span>{day.hours}h total</span>
-                <BarChart3 className="h-3 w-3" />
+              {/* Footer with total hours */}
+              <div className="mt-3 pt-2 border-t border-border/20">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="truncate">{day.hours}h total</span>
+                  <BarChart3 className="h-3 w-3 flex-shrink-0 ml-1" />
+                </div>
               </div>
             </div>
           ))}
@@ -704,49 +714,58 @@ const Schedule = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6 pt-0">
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[400px] overflow-y-auto">
                   {todaySchedule.map((session) => {
                     const MethodIcon = studyMethodIcons[session.studyMethod];
                     
                     return (
                       <div 
                         key={session.id} 
-                        className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
+                        className={`flex items-center p-3 rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] cursor-pointer overflow-hidden ${
                           session.status === 'current' 
                             ? 'border-primary shadow-lg bg-primary/5' 
                             : 'border-border/30 hover:border-primary/30 bg-background/50'
                         }`}
                         onClick={() => setSelectedSession(session)}
                       >
-                        <div className="flex flex-col items-center min-w-[60px]">
-                          <span className="text-sm font-bold">{session.startTime}</span>
+                        {/* Time column - fixed width */}
+                        <div className="flex flex-col items-center justify-center w-14 flex-shrink-0">
+                          <span className="text-xs font-bold text-center leading-tight">{session.startTime}</span>
                           <span className="text-xs text-muted-foreground">{session.duration}m</span>
                         </div>
                         
-                        <div className="flex-1">
+                        {/* Content column - flexible */}
+                        <div className="flex-1 min-w-0 mx-3">
                           <div className="flex items-center space-x-2 mb-1">
-                            <div className={`w-6 h-6 bg-gradient-to-br ${subjectColors[session.subject as keyof typeof subjectColors]} rounded-lg flex items-center justify-center`}>
+                            <div className={`w-5 h-5 bg-gradient-to-br ${subjectColors[session.subject as keyof typeof subjectColors]} rounded-lg flex items-center justify-center flex-shrink-0`}>
                               <MethodIcon className="h-3 w-3 text-white" />
                             </div>
-                            <p className="font-semibold text-sm">{session.subject}</p>
+                            <p className="font-semibold text-xs truncate">
+                              {session.subject === 'Computer Science' ? 'CS' : 
+                               session.subject === 'Mathematics' ? 'Math' : 
+                               session.subject}
+                            </p>
                           </div>
-                          <p className="text-xs text-muted-foreground truncate">{session.topic}</p>
+                          <p className="text-xs text-muted-foreground truncate leading-tight">{session.topic}</p>
                         </div>
                         
-                        <div className="flex flex-col items-end space-y-2">
+                        {/* Status column - fixed width */}
+                        <div className="flex flex-col items-end space-y-1 w-16 flex-shrink-0">
                           <Badge
                             variant={
                               session.status === 'completed' ? 'default' :
                               session.status === 'current' ? 'destructive' : 'secondary'
                             }
-                            className="text-xs"
+                            className="text-xs px-1.5 py-0.5 h-auto whitespace-nowrap"
                           >
-                            {session.status === 'current' && <div className="w-2 h-2 bg-white rounded-full animate-pulse mr-1" />}
-                            {session.status}
+                            {session.status === 'current' && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse mr-1" />}
+                            {session.status === 'completed' ? '✓' : 
+                             session.status === 'current' ? 'Now' : 
+                             'Later'}
                           </Badge>
                           
                           {session.status === 'current' && (
-                            <Button size="sm" variant="ghost" className="p-1">
+                            <Button size="sm" variant="ghost" className="p-1 h-6 w-6">
                               <Play className="h-3 w-3" />
                             </Button>
                           )}
@@ -778,14 +797,14 @@ const Schedule = () => {
                     <Progress value={56} className="h-3" />
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl">
-                      <div className="text-2xl font-bold text-blue-600">1</div>
-                      <div className="text-xs text-muted-foreground">Completed</div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl overflow-hidden">
+                      <div className="text-xl font-bold text-blue-600 mb-1">1</div>
+                      <div className="text-xs text-muted-foreground truncate">Completed</div>
                     </div>
-                    <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-2xl">
-                      <div className="text-2xl font-bold text-orange-600">3</div>
-                      <div className="text-xs text-muted-foreground">Remaining</div>
+                    <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl overflow-hidden">
+                      <div className="text-xl font-bold text-orange-600 mb-1">3</div>
+                      <div className="text-xs text-muted-foreground truncate">Remaining</div>
                     </div>
                   </div>
                   
