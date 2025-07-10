@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useStudyPlan } from "@/hooks/useStudyPlans";
+import { useCreateStudySession } from "@/hooks/useStudySessions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,10 +33,10 @@ import {
   BarChart3,
   Timer,
   Settings,
-  Plus
+  Plus,
+  Loader
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useStudyPlan } from "@/hooks/useStudyPlans";
 import Navbar from "@/components/Navbar";
 
 const ModernProgressBar = ({ progress }: { progress: number }) => {
@@ -59,10 +61,31 @@ const StudyPlanDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // Fetch study plan data
+  const { data: studyPlan, isLoading, error } = useStudyPlan(id || "");
+  const createSessionMutation = useCreateStudySession();
   const [notes, setNotes] = useState("");
 
-  // Fetch study plan data
-  const { data: studyPlan, isLoading, error } = useStudyPlan(id || '');
+  // Handle starting a new study session
+  const handleStartSession = (topic?: string, dayId?: string) => {
+    if (!studyPlan) return;
+
+    const sessionData = {
+      title: topic || `${studyPlan.subject} Study Session`,
+      topic: topic || studyPlan.subject,
+      study_plan_id: studyPlan.id,
+      day_id: dayId,
+      status: 'scheduled' as const,
+      objectives: topic ? [topic] : [`Study ${studyPlan.subject}`]
+    };
+
+    createSessionMutation.mutate(sessionData, {
+      onSuccess: (session) => {
+        navigate(`/study/${session.id}`);
+      }
+    });
+  };
 
   // Loading state
   if (isLoading) {
@@ -290,10 +313,13 @@ const StudyPlanDetail = () => {
                                 <span>{day.estimated_time_minutes || 60} min</span>
                               </div>
                               {!day.completed && (
-                                <Button size="sm" variant="outline" asChild>
-                                  <Link to={`/study/${day.id}`}>
-                                    <Play className="h-3 w-3" />
-                                  </Link>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleStartSession(day.topic, day.id)}
+                                  disabled={createSessionMutation.isPending}
+                                >
+                                  <Play className="h-3 w-3" />
                                 </Button>
                               )}
                             </div>
@@ -519,9 +545,18 @@ const StudyPlanDetail = () => {
                       <span className="font-medium">{aiInsights.nextSession.estimated} minutes</span>
                     </div>
                   </div>
-                  <Button size="sm" className="w-full mt-3">
-                    <Play className="h-3 w-3 mr-2" />
-                    Start Next Session
+                  <Button 
+                    size="sm" 
+                    className="w-full mt-3"
+                    onClick={() => handleStartSession()}
+                    disabled={createSessionMutation.isPending}
+                  >
+                    {createSessionMutation.isPending ? (
+                      <Loader className="h-3 w-3 mr-2 animate-spin" />
+                    ) : (
+                      <Play className="h-3 w-3 mr-2" />
+                    )}
+                    Start Study Session
                   </Button>
                 </div>
               </CardContent>
