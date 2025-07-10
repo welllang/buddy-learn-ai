@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, Mail, Lock, User, Eye, EyeOff, ArrowLeft, Shield, CheckCircle, XCircle, AlertCircle, Users, Gift } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -131,15 +132,6 @@ const Auth = () => {
     validateForm();
   };
 
-  const checkEmailExists = async (email: string) => {
-    // Simulate email checking - replace with actual API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Demo: some emails already exist
-    const existingEmails = ['john@example.com', 'test@test.com'];
-    return existingEmails.includes(email.toLowerCase());
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -155,35 +147,54 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (!isLogin) {
-        // Check for duplicate email
-        const emailExists = await checkEmailExists(formData.email);
-        if (emailExists) {
-          setValidationErrors(prev => ({ ...prev, email: "An account with this email already exists" }));
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Demo authentication - redirect to onboarding for signup, dashboard for login
-      setTimeout(() => {
-        toast({
-          title: isLogin ? "Welcome back!" : "Account created!",
-          description: isLogin 
-            ? "You've been logged in successfully." 
-            : "Welcome to StudyBuddy AI! Let's set up your profile.",
+      if (isLogin) {
+        // Sign in with email and password
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
         });
+
+        if (error) throw error;
+
+        toast({
+          title: "Welcome back!",
+          description: "You've been logged in successfully.",
+        });
+        navigate("/dashboard");
+      } else {
+        // Sign up with email and password
+        const redirectUrl = `${window.location.origin}/dashboard`;
         
-        if (isLogin) {
-          navigate("/dashboard");
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: redirectUrl,
+            data: {
+              display_name: formData.name,
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.user && !data.user.email_confirmed_at) {
+          toast({
+            title: "Check your email!",
+            description: "We've sent you a confirmation link to complete your registration.",
+          });
         } else {
+          toast({
+            title: "Account created!",
+            description: "Welcome to StudyBuddy AI! Let's set up your profile.",
+          });
           navigate("/onboarding");
         }
-      }, 1000);
-    } catch (error) {
+      }
+    } catch (error: any) {
       toast({
         title: "Authentication Error",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -191,16 +202,25 @@ const Auth = () => {
     }
   };
 
-  const handleGoogleAuth = () => {
+  const handleGoogleAuth = async () => {
     setLoading(true);
-    // Demo Google auth
-    setTimeout(() => {
-      toast({
-        title: "Google Sign In",
-        description: "Signed in with Google successfully!",
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
       });
-      navigate("/dashboard");
-    }, 1000);
+
+      if (error) throw error;
+    } catch (error: any) {
+      toast({
+        title: "Google Sign In Error",
+        description: error.message || "Failed to sign in with Google.",
+        variant: "destructive"
+      });
+      setLoading(false);
+    }
   };
 
   const handleGuestMode = () => {
@@ -211,11 +231,37 @@ const Auth = () => {
     navigate("/dashboard");
   };
 
-  const handleForgotPassword = () => {
-    toast({
-      title: "Password Reset",
-      description: "Password reset instructions will be sent to your email.",
-    });
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address first.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Password Reset",
+        description: "Check your email for password reset instructions.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Reset Error",
+        description: error.message || "Failed to send reset email.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -584,16 +630,13 @@ const Auth = () => {
           </CardContent>
         </Card>
 
-        <div className="text-center mt-6">
-          <p className="text-sm text-muted-foreground">
-            Demo Mode: Use any email/password to continue
-          </p>
-          {!isLogin && (
-            <p className="text-xs text-muted-foreground mt-2">
+        {!isLogin && (
+          <div className="text-center mt-6">
+            <p className="text-xs text-muted-foreground">
               Next: Profile setup → Learning assessment → Study plan creation
             </p>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
