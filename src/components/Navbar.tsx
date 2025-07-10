@@ -194,9 +194,11 @@ const Navbar = () => {
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer">
                   <Users className="mr-2 h-4 w-4" />
@@ -304,9 +306,11 @@ const Navbar = () => {
                     </div>
 
                     <div className="mt-4 space-y-2">
-                      <Button variant="ghost" className="w-full justify-start">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
+                      <Button variant="ghost" className="w-full justify-start" asChild>
+                        <Link to="/settings">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Link>
                       </Button>
                       <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-50">
                         <LogOut className="mr-2 h-4 w-4" />
