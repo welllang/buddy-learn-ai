@@ -17,6 +17,7 @@ import { GoalDetailView } from "./components/goals/GoalDetailView";
 import Reports from "./pages/Reports";
 import StudySession from "./pages/StudySession";
 import Settings from "./pages/Settings";
+import Billing from "./pages/Billing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/goals/:goalId" element={<GoalDetailView />} />
           <Route path="/study/:sessionId" element={<StudySession />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/billing" element={<Billing />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
