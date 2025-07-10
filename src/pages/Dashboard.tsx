@@ -39,14 +39,71 @@ import {
   PieChart,
   Users,
   FileText,
-  Globe
+  Globe,
+  GraduationCap,
+  BookMarked,
+  Timer,
+  TrendingDown,
+  Activity,
+  Lightbulb,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const location = useLocation();
+  
+  // Enhanced Demo Data with more creativity
+  const currentUser = {
+    name: "Alexandra Chen",
+    email: "alex.chen@university.edu",
+    avatar: "AC",
+    level: "Advanced Learner",
+    plan: "Premium Student",
+    streak: 23,
+    totalHours: 342,
+    rank: "Top 5%"
+  };
+
+  const todaySessions = [
+    {
+      id: 1,
+      subject: "Artificial Intelligence",
+      topic: "Neural Networks & Deep Learning",
+      type: "Video Lecture",
+      duration: 75,
+      progress: 68,
+      startTime: "09:00 AM",
+      difficulty: "Advanced",
+      instructor: "Dr. Sarah Kim",
+      status: "in-progress"
+    },
+    {
+      id: 2,
+      subject: "Quantum Computing", 
+      topic: "Quantum Algorithms",
+      type: "Interactive Lab",
+      duration: 90,
+      progress: 0,
+      startTime: "02:30 PM", 
+      difficulty: "Expert",
+      instructor: "Prof. Michael Zhang",
+      status: "upcoming"
+    },
+    {
+      id: 3,
+      subject: "Data Science",
+      topic: "Machine Learning Models",
+      type: "Practice Session",
+      duration: 60,
+      progress: 100,
+      startTime: "07:00 PM",
+      difficulty: "Intermediate", 
+      instructor: "Dr. Emma Wilson",
+      status: "completed"
+    }
+  ];
   
   // Demo data
   const currentStreak = 7;
