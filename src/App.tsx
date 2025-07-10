@@ -18,6 +18,8 @@ import Reports from "./pages/Reports";
 import StudySession from "./pages/StudySession";
 import Settings from "./pages/Settings";
 import Billing from "./pages/Billing";
+import Help from "./pages/Help";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +46,8 @@ const App = () => (
           <Route path="/study/:sessionId" element={<StudySession />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/billing" element={<Billing />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/support" element={<Support />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
