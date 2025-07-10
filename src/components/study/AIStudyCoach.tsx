@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Brain,
   Lightbulb,
@@ -11,7 +14,9 @@ import {
   Coffee,
   TrendingUp,
   Clock,
-  Zap
+  Zap,
+  Send,
+  Loader
 } from "lucide-react";
 
 interface AIStudyCoachProps {
@@ -21,8 +26,15 @@ interface AIStudyCoachProps {
 }
 
 export const AIStudyCoach = ({ topic, sessionTime, progress }: AIStudyCoachProps) => {
+  const { toast } = useToast();
   const [currentTip, setCurrentTip] = useState(0);
   const [showBreakReminder, setShowBreakReminder] = useState(false);
+  const [aiTips, setAiTips] = useState<any[]>([]);
+  const [isLoadingTip, setIsLoadingTip] = useState(false);
+  const [userQuestion, setUserQuestion] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const studyTips = [
     {
@@ -65,6 +77,68 @@ export const AIStudyCoach = ({ topic, sessionTime, progress }: AIStudyCoachProps
     { title: "Time Complexity Analysis", relevance: "Medium" }
   ];
 
+  // Generate AI tips based on current topic
+  const generateAITip = async () => {
+    setIsLoadingTip(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-assistant', {
+        body: {
+          message: `Give me a specific study tip for learning about ${topic}. Make it actionable and concise.`,
+          context: `Student is currently studying ${topic}, has been studying for ${Math.floor(sessionTime / 60)} minutes, and is ${progress}% through the session.`
+        }
+      });
+
+      if (error) throw error;
+
+      const newTip = {
+        type: "ai-generated",
+        icon: <Brain className="h-4 w-4" />,
+        title: "AI Study Tip",
+        content: data.response
+      };
+
+      setAiTips(prev => [newTip, ...prev.slice(0, 4)]);
+    } catch (error) {
+      console.error('Error generating AI tip:', error);
+      toast({
+        title: "Could not generate tip",
+        description: "Please try again later",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingTip(false);
+    }
+  };
+
+  // Handle AI chat
+  const handleAskAI = async () => {
+    if (!userQuestion.trim()) return;
+    
+    setIsLoadingResponse(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-assistant', {
+        body: {
+          message: userQuestion,
+          context: `Student is studying ${topic} and has been studying for ${Math.floor(sessionTime / 60)} minutes.`
+        }
+      });
+
+      if (error) throw error;
+      
+      setAiResponse(data.response);
+      setUserQuestion("");
+    } catch (error) {
+      console.error('Error asking AI:', error);
+      toast({
+        title: "Could not get AI response",
+        description: "Please try again later",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingResponse(false);
+    }
+  };
+
   // Show break reminder every 25 minutes
   useEffect(() => {
     if (sessionTime > 0 && sessionTime % (25 * 60) === 0) {
@@ -73,13 +147,15 @@ export const AIStudyCoach = ({ topic, sessionTime, progress }: AIStudyCoachProps
     }
   }, [sessionTime]);
 
+  const allTips = [...aiTips, ...studyTips];
   const nextTip = () => {
-    setCurrentTip((prev) => (prev + 1) % (studyTips.length - 1));
+    setCurrentTip((prev) => (prev + 1) % (allTips.length - 1));
     setShowBreakReminder(false);
   };
 
   const getTipTypeColor = (type: string) => {
     switch (type) {
+      case 'ai-generated': return 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400';
       case 'technique': return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400';
       case 'practice': return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400';
       case 'comprehension': return 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400';
@@ -101,19 +177,29 @@ export const AIStudyCoach = ({ topic, sessionTime, progress }: AIStudyCoachProps
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-sm">Study Tip</h4>
-            <Badge variant="outline" className={getTipTypeColor(studyTips[currentTip].type)}>
-              {studyTips[currentTip].type}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className={getTipTypeColor(allTips[currentTip]?.type || 'technique')}>
+                {allTips[currentTip]?.type || 'technique'}
+              </Badge>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={generateAITip}
+                disabled={isLoadingTip}
+              >
+                {isLoadingTip ? <Loader className="h-3 w-3 animate-spin" /> : <Brain className="h-3 w-3" />}
+              </Button>
+            </div>
           </div>
           
           <div className="bg-background/80 rounded-lg p-4 border">
             <div className="flex items-start gap-3">
               <div className="text-primary mt-0.5">
-                {studyTips[currentTip].icon}
+                {allTips[currentTip]?.icon || studyTips[0].icon}
               </div>
               <div>
-                <h5 className="font-medium text-sm mb-1">{studyTips[currentTip].title}</h5>
-                <p className="text-sm text-muted-foreground">{studyTips[currentTip].content}</p>
+                <h5 className="font-medium text-sm mb-1">{allTips[currentTip]?.title || studyTips[0].title}</h5>
+                <p className="text-sm text-muted-foreground">{allTips[currentTip]?.content || studyTips[0].content}</p>
               </div>
             </div>
           </div>
@@ -187,10 +273,46 @@ export const AIStudyCoach = ({ topic, sessionTime, progress }: AIStudyCoachProps
         </div>
 
         {/* AI Chat Interface */}
-        <Button variant="outline" className="w-full gap-2">
-          <MessageSquare className="h-4 w-4" />
-          Ask AI a Question
-        </Button>
+        <div className="space-y-3">
+          <Button 
+            variant="outline" 
+            className="w-full gap-2"
+            onClick={() => setShowChat(!showChat)}
+          >
+            <MessageSquare className="h-4 w-4" />
+            {showChat ? 'Hide AI Chat' : 'Ask AI a Question'}
+          </Button>
+
+          {showChat && (
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Textarea
+                  placeholder="Ask me anything about your study session..."
+                  value={userQuestion}
+                  onChange={(e) => setUserQuestion(e.target.value)}
+                  rows={2}
+                />
+                <Button
+                  onClick={handleAskAI}
+                  disabled={isLoadingResponse || !userQuestion.trim()}
+                  size="sm"
+                >
+                  {isLoadingResponse ? <Loader className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                </Button>
+              </div>
+
+              {aiResponse && (
+                <div className="bg-background/80 rounded-lg p-3 border">
+                  <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-primary" />
+                    AI Assistant
+                  </p>
+                  <p className="text-sm text-muted-foreground">{aiResponse}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

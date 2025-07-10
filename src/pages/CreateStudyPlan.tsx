@@ -39,10 +39,13 @@ import {
   Lightbulb,
   Eye,
   Headphones,
-  Hand
+  Hand,
+  Loader,
+  Wand2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCreateStudyPlan } from "@/hooks/useStudyPlans";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   // Step 1: Basic Information
@@ -76,6 +79,8 @@ const CreateStudyPlan = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [newTopic, setNewTopic] = useState("");
   const [newYoutubeLink, setNewYoutubeLink] = useState("");
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [aiGeneratedPlan, setAiGeneratedPlan] = useState<any>(null);
   
   const createStudyPlan = useCreateStudyPlan();
 
@@ -195,6 +200,48 @@ const CreateStudyPlan = () => {
     updateFormData(field, updatedFiles);
   };
 
+  const handleGenerateAIPlan = async () => {
+    if (!formData.planName || !formData.subjectCategory) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in at least the plan name and subject before generating with AI",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGeneratingAI(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-study-plan', {
+        body: {
+          subject: formData.subjectCategory,
+          targetDate: formData.targetDate,
+          dailyTime: formData.studyHoursPerDay[0] * 60,
+          difficultyLevel: formData.difficultyLevel || 'intermediate',
+          learningStyle: formData.studyStyle || 'mixed',
+          goals: formData.description
+        }
+      });
+
+      if (error) throw error;
+
+      setAiGeneratedPlan(data.studyPlan);
+      toast({
+        title: "AI Plan Generated! 🎉",
+        description: "Your personalized study plan has been created. Review and customize it below.",
+      });
+    } catch (error) {
+      console.error('Error generating AI plan:', error);
+      toast({
+        title: "Generation Failed",
+        description: "Could not generate AI plan. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       await createStudyPlan.mutateAsync({
@@ -206,8 +253,9 @@ const CreateStudyPlan = () => {
         daily_time_minutes: formData.studyHoursPerDay[0] * 60,
         difficulty: formData.difficultyLevel,
         learning_style: formData.studyStyle,
-        ai_generated: true,
+        ai_generated: !!aiGeneratedPlan,
         category: "medium-term",
+        metadata: aiGeneratedPlan ? { aiPlan: aiGeneratedPlan } : {}
       });
       
       navigate("/study-plans");
@@ -1172,8 +1220,31 @@ const CreateStudyPlan = () => {
                 </div>
               </div>
 
-              {/* Generate Button */}
-              <div className="text-center space-y-6">
+              {/* Generate Buttons */}
+              <div className="text-center space-y-4">
+                {/* AI Generate Button */}
+                <div className="relative inline-block">
+                  <Button
+                    size="lg"
+                    onClick={handleGenerateAIPlan}
+                    disabled={isGeneratingAI || !formData.planName || !formData.subjectCategory}
+                    className="px-8 py-4 text-lg font-bold bg-gradient-to-r from-purple-500 to-blue-500 hover:shadow-2xl hover:scale-105 transition-all duration-300 rounded-2xl text-white"
+                  >
+                    {isGeneratingAI ? (
+                      <>
+                        <Loader className="mr-2 h-5 w-5 animate-spin" />
+                        Generating with AI...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="mr-2 h-5 w-5" />
+                        Generate with AI
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {/* Traditional Create Button */}
                 <div className="relative inline-block">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-3xl blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
                   <Button
@@ -1197,6 +1268,42 @@ const CreateStudyPlan = () => {
                     )}
                   </Button>
                 </div>
+
+                {/* AI Generated Plan Preview */}
+                {aiGeneratedPlan && (
+                  <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl border border-purple-200 dark:border-purple-800">
+                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                      <Brain className="h-5 w-5 text-purple-600" />
+                      AI Generated Study Plan Preview
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-purple-800 dark:text-purple-400">Title:</h4>
+                        <p className="text-sm">{aiGeneratedPlan.title}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-purple-800 dark:text-purple-400">Duration:</h4>
+                        <p className="text-sm">{aiGeneratedPlan.duration}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-purple-800 dark:text-purple-400">Primary Technique:</h4>
+                        <p className="text-sm">{aiGeneratedPlan.studyTechniques?.primary}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-purple-800 dark:text-purple-400">Weekly Breakdown:</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                          {aiGeneratedPlan.weeklyBreakdown?.slice(0, 4).map((week: any, index: number) => (
+                            <div key={index} className="text-xs bg-white/50 dark:bg-gray-800/50 p-2 rounded">
+                              <strong>Week {week.week}:</strong> {week.focus}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+                
                 <div className="space-y-2">
                   <p className="text-muted-foreground">
                     🤖 AI is analyzing your content and preferences
