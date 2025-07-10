@@ -1,3 +1,4 @@
+
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,359 +16,506 @@ import {
   Zap,
   Download,
   Filter,
-  ChevronRight
+  ChevronRight,
+  Activity,
+  TrendingDown,
+  PieChart,
+  MapPin,
+  Lightbulb,
+  AlertCircle,
+  CheckCircle2,
+  Star
 } from "lucide-react";
+import { 
+  LineChart, 
+  Line, 
+  AreaChart, 
+  Area, 
+  BarChart, 
+  Bar, 
+  PieChart as RechartsPieChart, 
+  Cell, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
 
 const ProgressPage = () => {
-  // Demo analytics data
+  // Enhanced analytics data
   const overallStats = {
     totalHours: 125.5,
     sessionsCompleted: 89,
     currentStreak: 7,
     goalsAchieved: 15,
-    retentionRate: 87
+    retentionRate: 87,
+    avgSessionLength: 45,
+    studyEfficiency: 82,
+    weeklyGrowth: 12
   };
 
-  const monthlyProgress = [
-    { month: 'Jan', hours: 45, sessions: 25, retention: 82 },
-    { month: 'Feb', hours: 52, sessions: 30, retention: 85 },
-    { month: 'Mar', hours: 38, sessions: 22, retention: 79 },
-    { month: 'Apr', hours: 61, sessions: 35, retention: 89 },
-    { month: 'May', hours: 48, sessions: 28, retention: 87 },
-    { month: 'Jun', hours: 55, sessions: 32, retention: 91 },
+  const studyTimeData = [
+    { date: '2024-01-01', hours: 3.2, sessions: 2, retention: 85 },
+    { date: '2024-01-02', hours: 4.1, sessions: 3, retention: 88 },
+    { date: '2024-01-03', hours: 2.8, sessions: 2, retention: 82 },
+    { date: '2024-01-04', hours: 5.2, sessions: 4, retention: 91 },
+    { date: '2024-01-05', hours: 3.9, sessions: 3, retention: 87 },
+    { date: '2024-01-06', hours: 4.5, sessions: 3, retention: 89 },
+    { date: '2024-01-07', hours: 3.1, sessions: 2, retention: 84 },
   ];
 
-  const subjectProgress = [
-    { subject: 'Computer Science', hours: 45, progress: 75, grade: 'A-', trend: '+5%' },
-    { subject: 'Mathematics', hours: 38, progress: 65, grade: 'B+', trend: '+12%' },
-    { subject: 'Physics', hours: 32, progress: 55, grade: 'B', trend: '+8%' },
-    { subject: 'Chemistry', hours: 28, progress: 45, grade: 'B-', trend: '+15%' },
+  const subjectBreakdown = [
+    { subject: 'Computer Science', hours: 45, percentage: 36, color: '#3b82f6' },
+    { subject: 'Mathematics', hours: 32, percentage: 26, color: '#10b981' },
+    { subject: 'Physics', hours: 28, percentage: 22, color: '#f59e0b' },
+    { subject: 'Chemistry', hours: 20, percentage: 16, color: '#ef4444' },
+  ];
+
+  const performanceMetrics = [
+    { week: 'Week 1', retention: 75, quizScore: 78, efficiency: 72 },
+    { week: 'Week 2', retention: 82, quizScore: 85, efficiency: 79 },
+    { week: 'Week 3', retention: 87, quizScore: 88, efficiency: 85 },
+    { week: 'Week 4', retention: 89, quizScore: 92, efficiency: 88 },
   ];
 
   const studyPatterns = {
-    optimalTimes: ['9:00 AM - 11:00 AM', '2:00 PM - 4:00 PM'],
-    averageSessionLength: 45,
-    mostEffectiveMethod: 'Pomodoro Technique',
-    weeklyPattern: [85, 92, 78, 88, 95, 82, 70] // Mon-Sun effectiveness
+    optimalTimes: [
+      { time: '9:00 AM', effectiveness: 92, sessions: 15 },
+      { time: '2:00 PM', effectiveness: 88, sessions: 12 },
+      { time: '7:00 PM', effectiveness: 75, sessions: 8 }
+    ],
+    sessionLengths: [
+      { duration: '25-30 min', effectiveness: 85, count: 23 },
+      { duration: '45-60 min', effectiveness: 91, count: 18 },
+      { duration: '90+ min', effectiveness: 76, count: 8 }
+    ]
   };
 
-  const achievements = [
-    { title: 'Study Master', description: '100 sessions completed', date: '2024-01-15', icon: Award },
-    { title: 'Streak Champion', description: '30-day study streak', date: '2024-01-20', icon: Zap },
-    { title: 'Subject Expert', description: 'Mastered Data Structures', date: '2024-01-25', icon: Brain },
-    { title: 'Time Warrior', description: '100+ study hours', date: '2024-02-01', icon: Clock },
+  const aiInsights = [
+    {
+      type: 'improvement',
+      icon: TrendingUp,
+      title: 'Peak Performance Window',
+      insight: 'Your retention rate is 23% higher during 9-11 AM sessions. Consider scheduling complex topics during this time.',
+      priority: 'high',
+      action: 'Reschedule advanced topics'
+    },
+    {
+      type: 'warning',
+      icon: AlertCircle,
+      title: 'Study Session Length',
+      insight: 'Sessions longer than 90 minutes show 15% decreased efficiency. Consider implementing the Pomodoro technique.',
+      priority: 'medium',
+      action: 'Adjust session planning'
+    },
+    {
+      type: 'success',
+      icon: CheckCircle2,
+      title: 'Consistent Progress',
+      insight: 'Your 7-day streak and steady improvement pattern indicate excellent habit formation. Keep it up!',
+      priority: 'low',
+      action: 'Maintain current routine'
+    },
+    {
+      type: 'prediction',
+      icon: Brain,
+      title: 'Next Week Forecast',
+      insight: 'Based on current patterns, you\'re projected to complete 12 hours of study time with 88% retention rate.',
+      priority: 'info',
+      action: 'Plan accordingly'
+    }
   ];
+
+  const achievements = [
+    { title: 'Study Master', description: '100 sessions completed', date: '2024-01-15', icon: Award, rarity: 'gold' },
+    { title: 'Streak Champion', description: '30-day study streak', date: '2024-01-20', icon: Zap, rarity: 'silver' },
+    { title: 'Subject Expert', description: 'Mastered Data Structures', date: '2024-01-25', icon: Brain, rarity: 'bronze' },
+    { title: 'Time Warrior', description: '100+ study hours', date: '2024-02-01', icon: Clock, rarity: 'platinum' },
+  ];
+
+  const getRarityColor = (rarity: string) => {
+    switch (rarity) {
+      case 'platinum': return 'bg-slate-100 text-slate-800 border-slate-300';
+      case 'gold': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'silver': return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'bronze': return 'bg-orange-100 text-orange-800 border-orange-300';
+      default: return 'bg-blue-100 text-blue-800 border-blue-300';
+    }
+  };
+
+  const getInsightStyle = (type: string) => {
+    switch (type) {
+      case 'improvement': return 'border-l-4 border-l-green-500 bg-green-50';
+      case 'warning': return 'border-l-4 border-l-yellow-500 bg-yellow-50';
+      case 'success': return 'border-l-4 border-l-blue-500 bg-blue-50';
+      case 'prediction': return 'border-l-4 border-l-purple-500 bg-purple-50';
+      default: return 'border-l-4 border-l-gray-500 bg-gray-50';
+    }
+  };
 
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Progress Analytics</h1>
-            <p className="text-muted-foreground">Track your learning journey and identify improvement areas</p>
+        <div className="container mx-auto max-w-7xl">
+          {/* Enhanced Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Progress Analytics
+              </h1>
+              <p className="text-muted-foreground">
+                Track your learning journey with advanced insights and AI-powered recommendations
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filter Period
+              </Button>
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export Report
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-          </div>
-        </div>
 
-        {/* Overview Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-primary">{overallStats.totalHours}h</div>
-              <p className="text-sm text-muted-foreground">Total Study Hours</p>
-              <div className="text-xs text-success mt-1">+12% this month</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-secondary">{overallStats.sessionsCompleted}</div>
-              <p className="text-sm text-muted-foreground">Sessions Completed</p>
-              <div className="text-xs text-success mt-1">+8% this month</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-destructive">{overallStats.currentStreak}</div>
-              <p className="text-sm text-muted-foreground">Current Streak</p>
-              <div className="text-xs text-warning mt-1">Best: 15 days</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-success">{overallStats.goalsAchieved}</div>
-              <p className="text-sm text-muted-foreground">Goals Achieved</p>
-              <div className="text-xs text-success mt-1">75% completion rate</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-accent">{overallStats.retentionRate}%</div>
-              <p className="text-sm text-muted-foreground">Retention Rate</p>
-              <div className="text-xs text-success mt-1">+3% this month</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main Charts */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Monthly Progress Trends */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <TrendingUp className="h-5 w-5 mr-2 text-success" />
-                  Monthly Progress Trends
-                </CardTitle>
-                <CardDescription>
-                  Study hours, sessions, and retention rates over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {/* Study Hours Chart */}
+          {/* Enhanced Overview Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
+            <Card className="md:col-span-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="text-sm font-medium mb-3">Study Hours per Month</h4>
-                    <div className="flex items-end justify-between h-32">
-                      {monthlyProgress.map((month, index) => (
-                        <div key={index} className="flex flex-col items-center flex-1">
-                          <div 
-                            className="w-8 bg-gradient-to-t from-primary to-primary-glow rounded-t hover:opacity-80 transition-opacity"
-                            style={{ height: `${(month.hours / 70) * 100}%` }}
-                            title={`${month.month}: ${month.hours}h`}
-                          />
-                          <span className="text-xs text-muted-foreground mt-2">{month.month}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">Total Hours</p>
+                    <p className="text-2xl font-bold text-primary">{overallStats.totalHours}h</p>
+                    <p className="text-xs text-green-600 flex items-center mt-1">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +{overallStats.weeklyGrowth}% this week
+                    </p>
                   </div>
-
-                  {/* Retention Rate Chart */}
-                  <div>
-                    <h4 className="text-sm font-medium mb-3">Knowledge Retention Rate</h4>
-                    <div className="flex items-end justify-between h-24">
-                      {monthlyProgress.map((month, index) => (
-                        <div key={index} className="flex flex-col items-center flex-1">
-                          <div 
-                            className="w-6 bg-gradient-to-t from-success to-success/60 rounded-t"
-                            style={{ height: `${month.retention}%` }}
-                            title={`${month.month}: ${month.retention}%`}
-                          />
-                          <span className="text-xs text-muted-foreground mt-1">{month.month}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <Clock className="h-8 w-8 text-primary/70" />
                 </div>
               </CardContent>
             </Card>
 
-            {/* Subject Performance */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <BookOpen className="h-5 w-5 mr-2 text-primary" />
-                  Subject Performance
-                </CardTitle>
-                <CardDescription>
-                  Progress and grades across all subjects
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {subjectProgress.map((subject, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">{subject.subject}</span>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline">{subject.grade}</Badge>
-                          <span className="text-sm text-success">{subject.trend}</span>
+            <Card className="md:col-span-2 border-secondary/20 bg-gradient-to-br from-secondary/5 to-secondary/10">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Sessions</p>
+                    <p className="text-2xl font-bold text-secondary">{overallStats.sessionsCompleted}</p>
+                    <p className="text-xs text-green-600 flex items-center mt-1">
+                      <Activity className="h-3 w-3 mr-1" />
+                      Avg {overallStats.avgSessionLength}min
+                    </p>
+                  </div>
+                  <BarChart3 className="h-8 w-8 text-secondary/70" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="md:col-span-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-orange-500/10">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Current Streak</p>
+                    <p className="text-2xl font-bold text-orange-600">{overallStats.currentStreak}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Best: 15 days</p>
+                  </div>
+                  <Zap className="h-8 w-8 text-orange-500/70" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="md:col-span-2 border-green-500/20 bg-gradient-to-br from-green-500/5 to-green-500/10">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Efficiency</p>
+                    <p className="text-2xl font-bold text-green-600">{overallStats.studyEfficiency}%</p>
+                    <p className="text-xs text-green-600 flex items-center mt-1">
+                      <Star className="h-3 w-3 mr-1" />
+                      Excellent
+                    </p>
+                  </div>
+                  <Brain className="h-8 w-8 text-green-500/70" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Main Analytics */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Study Time Trends */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center">
+                        <TrendingUp className="h-5 w-5 mr-2 text-primary" />
+                        Study Time Trends
+                      </CardTitle>
+                      <CardDescription>Daily study hours and session patterns</CardDescription>
+                    </div>
+                    <Badge variant="outline">Last 7 days</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={studyTimeData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { weekday: 'short' })} />
+                        <YAxis />
+                        <Tooltip 
+                          labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                          formatter={(value, name) => [value, name === 'hours' ? 'Study Hours' : 'Sessions']}
+                        />
+                        <Area type="monotone" dataKey="hours" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
+                        <Line type="monotone" dataKey="sessions" stroke="#10b981" strokeWidth={2} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Subject Breakdown & Performance */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <PieChart className="h-5 w-5 mr-2 text-secondary" />
+                      Subject Distribution
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-48 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsPieChart>
+                          <Pie
+                            data={subjectBreakdown}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={40}
+                            outerRadius={80}
+                            dataKey="hours"
+                          >
+                            {subjectBreakdown.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip formatter={(value) => [`${value}h`, 'Study Hours']} />
+                        </RechartsPieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="space-y-2 mt-4">
+                      {subjectBreakdown.map((subject, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: subject.color }} />
+                            <span>{subject.subject}</span>
+                          </div>
+                          <span className="font-medium">{subject.hours}h ({subject.percentage}%)</span>
                         </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Activity className="h-5 w-5 mr-2 text-green-600" />
+                      Performance Metrics
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-48 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={performanceMetrics}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="week" />
+                          <YAxis domain={[0, 100]} />
+                          <Tooltip />
+                          <Legend />
+                          <Line type="monotone" dataKey="retention" stroke="#3b82f6" name="Retention %" strokeWidth={2} />
+                          <Line type="monotone" dataKey="quizScore" stroke="#10b981" name="Quiz Score %" strokeWidth={2} />
+                          <Line type="monotone" dataKey="efficiency" stroke="#f59e0b" name="Efficiency %" strokeWidth={2} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Study Patterns Analysis */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <MapPin className="h-5 w-5 mr-2 text-purple-600" />
+                    Study Patterns & Optimization
+                  </CardTitle>
+                  <CardDescription>Your most effective study habits and timing</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold mb-3 text-sm">Optimal Study Times</h4>
+                      <div className="space-y-3">
+                        {studyPatterns.optimalTimes.map((time, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                            <div>
+                              <span className="font-medium">{time.time}</span>
+                              <p className="text-xs text-muted-foreground">{time.sessions} sessions</p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-sm font-bold text-green-600">{time.effectiveness}%</span>
+                              <p className="text-xs text-muted-foreground">effectiveness</p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <Progress value={subject.progress} className="flex-1 h-2" />
-                        <span className="text-sm text-muted-foreground w-12">{subject.progress}%</span>
-                        <span className="text-sm text-muted-foreground w-12">{subject.hours}h</span>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-semibold mb-3 text-sm">Session Length Impact</h4>
+                      <div className="space-y-3">
+                        {studyPatterns.sessionLengths.map((session, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                            <div>
+                              <span className="font-medium">{session.duration}</span>
+                              <p className="text-xs text-muted-foreground">{session.count} sessions</p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-sm font-bold text-blue-600">{session.effectiveness}%</span>
+                              <p className="text-xs text-muted-foreground">effectiveness</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Enhanced Right Sidebar */}
+            <div className="space-y-6">
+              {/* AI Insights Panel */}
+              <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <Brain className="h-5 w-5 mr-2 text-purple-600" />
+                    AI Insights & Recommendations
+                  </CardTitle>
+                  <CardDescription>Personalized analysis of your learning patterns</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {aiInsights.map((insight, index) => (
+                    <div key={index} className={`p-4 rounded-lg ${getInsightStyle(insight.type)}`}>
+                      <div className="flex items-start space-x-3">
+                        <insight.icon className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <h5 className="font-semibold text-sm mb-1">{insight.title}</h5>
+                          <p className="text-xs text-gray-700 mb-2">{insight.insight}</p>
+                          <div className="flex items-center justify-between">
+                            <Badge variant="outline" className="text-xs">
+                              {insight.priority}
+                            </Badge>
+                            <Button variant="ghost" size="sm" className="text-xs h-6 px-2">
+                              {insight.action}
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            {/* Study Patterns */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <BarChart3 className="h-5 w-5 mr-2 text-accent" />
-                  Study Patterns Analysis
-                </CardTitle>
-                <CardDescription>
-                  Insights about your most effective study habits
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium mb-3">Weekly Effectiveness</h4>
-                    <div className="flex items-end justify-between h-20 mb-2">
-                      {studyPatterns.weeklyPattern.map((effectiveness, index) => (
-                        <div key={index} className="flex flex-col items-center">
-                          <div 
-                            className="w-6 bg-gradient-to-t from-accent to-accent/60 rounded-t"
-                            style={{ height: `${effectiveness}%` }}
-                          />
-                          <span className="text-xs text-muted-foreground mt-1">
-                            {['M', 'T', 'W', 'T', 'F', 'S', 'S'][index]}
-                          </span>
-                        </div>
-                      ))}
+              {/* Goal Progress */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <Target className="h-4 w-4 mr-2 text-green-600" />
+                    Active Goals
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Study 100 hours</span>
+                        <span className="font-bold">125/100h</span>
+                      </div>
+                      <Progress value={100} className="h-2" />
+                      <Badge className="bg-green-100 text-green-800 border-green-200">Completed ✓</Badge>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>30-day streak</span>
+                        <span className="font-bold">7/30 days</span>
+                      </div>
+                      <Progress value={23} className="h-2" />
+                      <Badge variant="outline">23% Complete</Badge>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Master 5 subjects</span>
+                        <span className="font-bold">3/5 subjects</span>
+                      </div>
+                      <Progress value={60} className="h-2" />
+                      <Badge variant="outline">60% Complete</Badge>
                     </div>
                   </div>
                   
-                  <div className="space-y-3">
-                    <div>
-                      <span className="text-sm text-muted-foreground">Optimal Study Times</span>
-                      <div className="text-sm font-medium">
-                        {studyPatterns.optimalTimes.join(', ')}
+                  <Button variant="outline" size="sm" className="w-full">
+                    View All Goals
+                    <ChevronRight className="h-3 w-3 ml-1" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Recent Achievements */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <Award className="h-4 w-4 mr-2 text-yellow-600" />
+                    Recent Achievements
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {achievements.map((achievement, index) => (
+                    <div key={index} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/30">
+                      <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center">
+                        <achievement.icon className="h-5 w-5 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-sm">{achievement.title}</p>
+                          <Badge className={getRarityColor(achievement.rarity)}>
+                            {achievement.rarity}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-1">{achievement.description}</p>
+                        <p className="text-xs text-muted-foreground">{achievement.date}</p>
                       </div>
                     </div>
-                    <div>
-                      <span className="text-sm text-muted-foreground">Avg Session Length</span>
-                      <div className="text-sm font-medium">{studyPatterns.averageSessionLength} minutes</div>
-                    </div>
-                    <div>
-                      <span className="text-sm text-muted-foreground">Most Effective Method</span>
-                      <div className="text-sm font-medium">{studyPatterns.mostEffectiveMethod}</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  ))}
+                  
+                  <Button variant="outline" size="sm" className="w-full">
+                    View All Achievements
+                    <ChevronRight className="h-3 w-3 ml-1" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
-
-          {/* Right Sidebar */}
-          <div className="space-y-6">
-            {/* Goal Progress */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center text-lg">
-                  <Target className="h-4 w-4 mr-2 text-success" />
-                  Goal Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Study 100 hours</span>
-                    <span>125/100h</span>
-                  </div>
-                  <Progress value={100} className="h-2" />
-                  <Badge className="bg-success/10 text-success border-success/20">Completed</Badge>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>30-day streak</span>
-                    <span>7/30 days</span>
-                  </div>
-                  <Progress value={23} className="h-2" />
-                  <Badge variant="outline">In Progress</Badge>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Master 5 subjects</span>
-                    <span>3/5 subjects</span>
-                  </div>
-                  <Progress value={60} className="h-2" />
-                  <Badge variant="outline">In Progress</Badge>
-                </div>
-                
-                <Button variant="outline" size="sm" className="w-full">
-                  View All Goals
-                  <ChevronRight className="h-3 w-3 ml-1" />
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Recent Achievements */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center text-lg">
-                  <Award className="h-4 w-4 mr-2 text-warning" />
-                  Recent Achievements
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {achievements.map((achievement, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-warning/10 rounded-lg flex items-center justify-center">
-                      <achievement.icon className="h-4 w-4 text-warning" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{achievement.title}</p>
-                      <p className="text-xs text-muted-foreground">{achievement.description}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{achievement.date}</p>
-                    </div>
-                  </div>
-                ))}
-                
-                <Button variant="outline" size="sm" className="w-full">
-                  View All Achievements
-                  <ChevronRight className="h-3 w-3 ml-1" />
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Performance Insights */}
-            <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center text-lg">
-                  <Brain className="h-4 w-4 mr-2 text-primary" />
-                  AI Insights
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="p-3 rounded-lg bg-background/50">
-                  <p className="text-sm font-medium mb-1">📈 Improvement</p>
-                  <p className="text-xs text-muted-foreground">
-                    Your retention rate improved by 12% when using active recall techniques.
-                  </p>
-                </div>
-                
-                <div className="p-3 rounded-lg bg-background/50">
-                  <p className="text-sm font-medium mb-1">⏰ Optimization</p>
-                  <p className="text-xs text-muted-foreground">
-                    You're 23% more focused during morning sessions. Consider scheduling complex topics then.
-                  </p>
-                </div>
-                
-                <div className="p-3 rounded-lg bg-background/50">
-                  <p className="text-sm font-medium mb-1">🎯 Recommendation</p>
-                  <p className="text-xs text-muted-foreground">
-                    Based on your progress, you're ready for advanced algorithms. Consider adding it to your plan.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
         </div>
       </div>
     </>
