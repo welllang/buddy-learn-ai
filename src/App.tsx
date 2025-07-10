@@ -16,6 +16,7 @@ import Goals from "./pages/Goals";
 import { GoalDetailView } from "./components/goals/GoalDetailView";
 import Reports from "./pages/Reports";
 import StudySession from "./pages/StudySession";
+import StudyMaterials from "./pages/StudyMaterials";
 import Settings from "./pages/Settings";
 import Billing from "./pages/Billing";
 import Help from "./pages/Help";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/goals" element={<Goals />} />
           <Route path="/goals/:goalId" element={<GoalDetailView />} />
           <Route path="/study/:sessionId" element={<StudySession />} />
+          <Route path="/materials" element={<StudyMaterials />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/billing" element={<Billing />} />
           <Route path="/help" element={<Help />} />
