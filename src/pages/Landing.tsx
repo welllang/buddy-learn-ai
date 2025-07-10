@@ -175,21 +175,21 @@ const Landing = () => {
                 </CardContent>
               </Card>
 
-              {/* Floating testimonial */}
-              <div className="absolute -right-4 -top-4 bg-background border border-border rounded-lg p-4 shadow-lg max-w-64 hidden lg:block">
+              {/* Floating testimonial - Fixed positioning */}
+              <div className="absolute -right-2 -top-2 bg-background border border-border rounded-lg p-3 shadow-lg w-56 hidden xl:block z-10">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  <div className="w-6 h-6 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white text-xs font-bold">
                     S
                   </div>
                   <div>
-                    <div className="font-medium text-sm">Sarah J.</div>
+                    <div className="font-medium text-xs text-foreground">Sarah J.</div>
                     <div className="text-xs text-muted-foreground">Psychology Student</div>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground mb-2">
                   "Improved my grades by 25% in one semester! The AI plans actually work."
                 </p>
-                <div className="flex items-center mt-2">
+                <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-3 w-3 fill-warning text-warning" />
                   ))}
@@ -200,133 +200,134 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Persona-Focused Benefits */}
+      {/* Pricing Plans Section */}
       <section className="py-16 px-4 bg-muted/30">
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Perfect for Every Type of Learner
+              Simple, Transparent Pricing
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Whether you're a student, professional, or career changer, our AI adapts to your unique needs.
+              Choose the plan that fits your study needs. Start free and upgrade anytime.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* College Student Persona */}
-            <Card className="relative overflow-hidden border-border/50 group hover:shadow-xl transition-all duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-success/5 to-success/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <CardHeader className="relative">
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-success group-hover:text-white transition-colors">
-                  <GraduationCap className="h-6 w-6 text-success group-hover:text-white" />
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Free Plan */}
+            <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-semibold mb-2 text-foreground">Free</h3>
+                  <div className="text-3xl font-bold text-foreground mb-1">$0</div>
+                  <div className="text-sm text-muted-foreground">Forever free</div>
                 </div>
-                <CardTitle className="text-xl">College Students</CardTitle>
-                <p className="text-muted-foreground">Like Sarah studying Psychology</p>
-              </CardHeader>
-              <CardContent className="relative space-y-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-success" />
-                  <span className="text-sm">Free trial - perfect for tight budgets</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-success" />
-                  <span className="text-sm">Mobile-first design for studying anywhere</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-success" />
-                  <span className="text-sm">Multi-course management made simple</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-success" />
-                  <span className="text-sm">Student discount - 50% off Pro plan</span>
-                </div>
-                <div className="pt-4">
-                  <Link to="/auth">
-                    <Button className="w-full bg-success hover:bg-success/90 group-hover:shadow-lg transition-all">
-                      Start Free Trial
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Basic study planning</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Progress tracking</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">3 active study plans</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Mobile app access</span>
+                  </li>
+                </ul>
+                <Link to="/auth" className="block">
+                  <Button variant="outline" className="w-full border-primary/50 text-primary hover:bg-primary/10">
+                    Get Started Free
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
-            {/* Working Professional Persona */}
-            <Card className="relative overflow-hidden border-border/50 group hover:shadow-xl transition-all duration-300 border-primary/50">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <Badge className="absolute top-4 right-4 bg-primary text-white">Popular</Badge>
-              <CardHeader className="relative">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
-                  <Briefcase className="h-6 w-6 text-primary group-hover:text-white" />
+            {/* Pro Plan - Most Popular */}
+            <Card className="border-primary shadow-lg relative hover:shadow-xl transition-all duration-300">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-primary text-white border-0 px-4 py-1">Most Popular</Badge>
+              </div>
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-semibold mb-2 text-foreground">Pro</h3>
+                  <div className="text-3xl font-bold text-foreground mb-1">$19</div>
+                  <div className="text-sm text-muted-foreground">per month</div>
                 </div>
-                <CardTitle className="text-xl">Working Professionals</CardTitle>
-                <p className="text-muted-foreground">Like Marcus preparing for PMP certification</p>
-              </CardHeader>
-              <CardContent className="relative space-y-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Time-efficient study plans for busy schedules</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Commute-friendly mobile learning</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Career-focused certification tracking</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  <span className="text-sm">ROI-focused learning optimization</span>
-                </div>
-                <div className="pt-4">
-                  <Link to="/auth">
-                    <Button className="w-full bg-gradient-to-r from-primary to-secondary group-hover:shadow-lg transition-all">
-                      Start Free Trial
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">AI-powered study plans</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Advanced analytics</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Unlimited study plans</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Calendar integration</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Priority support</span>
+                  </li>
+                </ul>
+                <Link to="/auth" className="block">
+                  <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white">
+                    Start Free Trial
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
-            {/* Career Changer Persona */}
-            <Card className="relative overflow-hidden border-border/50 group hover:shadow-xl transition-all duration-300">
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <CardHeader className="relative">
-                <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-accent group-hover:text-white transition-colors">
-                  <BookmarkCheck className="h-6 w-6 text-accent group-hover:text-white" />
+            {/* Student Plan */}
+            <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-semibold mb-2 text-foreground">Student</h3>
+                  <div className="text-3xl font-bold text-foreground mb-1">$9</div>
+                  <div className="text-sm text-muted-foreground">per month</div>
+                  <Badge className="bg-success/10 text-success border-success/20 mt-2">50% Off</Badge>
                 </div>
-                <CardTitle className="text-xl">Career Changers</CardTitle>
-                <p className="text-muted-foreground">Like Elena transitioning to UX Design</p>
-              </CardHeader>
-              <CardContent className="relative space-y-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-accent" />
-                  <span className="text-sm">Structured learning paths for new fields</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-accent" />
-                  <span className="text-sm">Flexible scheduling for life balance</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-accent" />
-                  <span className="text-sm">Confidence-building milestone tracking</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-accent" />
-                  <span className="text-sm">Industry-specific skill development</span>
-                </div>
-                <div className="pt-4">
-                  <Link to="/auth">
-                    <Button className="w-full bg-accent hover:bg-accent/90 group-hover:shadow-lg transition-all">
-                      Start Free Trial
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">All Pro features</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Student discount pricing</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Verify with .edu email</span>
+                  </li>
+                  <li className="flex items-center text-foreground">
+                    <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
+                    <span className="text-sm">Extended trial period</span>
+                  </li>
+                </ul>
+                <Link to="/auth" className="block">
+                  <Button variant="outline" className="w-full border-success/50 text-success hover:bg-success/10">
+                    Claim Student Discount
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-muted-foreground">
+              ✓ 14-day free trial  ✓ No credit card required  ✓ Cancel anytime
+            </p>
           </div>
         </div>
       </section>
@@ -497,7 +498,7 @@ const Landing = () => {
                   ))}
                   <Badge className="ml-auto bg-success/10 text-success border-success/20">Verified</Badge>
                 </div>
-                <p className="text-muted-foreground mb-6 italic">
+                <p className="text-foreground mb-6 italic">
                   "I was struggling with 5 courses and part-time work. StudyBuddy AI created a plan that actually worked with my crazy schedule. Went from C's to A's in one semester!"
                 </p>
                 <div className="flex items-center">
@@ -505,7 +506,7 @@ const Landing = () => {
                     <span className="text-white font-bold">SJ</span>
                   </div>
                   <div>
-                    <div className="font-semibold">Sarah Johnson</div>
+                    <div className="font-semibold text-foreground">Sarah Johnson</div>
                     <div className="text-sm text-muted-foreground">Psychology Major, State University</div>
                     <div className="text-xs text-success font-medium mt-1">↗ 25% grade improvement</div>
                   </div>
@@ -524,7 +525,7 @@ const Landing = () => {
                   ))}
                   <Badge className="ml-auto bg-primary/10 text-primary border-primary/20">Verified</Badge>
                 </div>
-                <p className="text-muted-foreground mb-6 italic">
+                <p className="text-foreground mb-6 italic">
                   "Passed my PMP certification on the first try while working full-time and commuting 2 hours daily. The mobile app was a game-changer for studying on the train."
                 </p>
                 <div className="flex items-center">
@@ -532,7 +533,7 @@ const Landing = () => {
                     <span className="text-white font-bold">MC</span>
                   </div>
                   <div>
-                    <div className="font-semibold">Marcus Chen</div>
+                    <div className="font-semibold text-foreground">Marcus Chen</div>
                     <div className="text-sm text-muted-foreground">Marketing Coordinator</div>
                     <div className="text-xs text-primary font-medium mt-1">✓ PMP Certified in 8 weeks</div>
                   </div>
@@ -550,7 +551,7 @@ const Landing = () => {
                   ))}
                   <Badge className="ml-auto bg-accent/10 text-accent border-accent/20">Verified</Badge>
                 </div>
-                <p className="text-muted-foreground mb-6 italic">
+                <p className="text-foreground mb-6 italic">
                   "Transitioning from teaching to UX design felt overwhelming. The structured learning path gave me confidence and clear milestones. Now I'm a UX designer at a tech startup!"
                 </p>
                 <div className="flex items-center">
@@ -558,7 +559,7 @@ const Landing = () => {
                     <span className="text-white font-bold">EP</span>
                   </div>
                   <div>
-                    <div className="font-semibold">Elena Parker</div>
+                    <div className="font-semibold text-foreground">Elena Parker</div>
                     <div className="text-sm text-muted-foreground">Former Teacher → UX Designer</div>
                     <div className="text-xs text-accent font-medium mt-1">✓ Career change in 6 months</div>
                   </div>
