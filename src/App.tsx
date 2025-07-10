@@ -13,6 +13,7 @@ import CreateStudyPlan from "./pages/CreateStudyPlan";
 import Schedule from "./pages/Schedule";
 import Progress from "./pages/Progress";
 import Goals from "./pages/Goals";
+import { GoalDetailView } from "./components/goals/GoalDetailView";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/progress" element={<Progress />} />
           <Route path="/progress/reports" element={<Reports />} />
           <Route path="/goals" element={<Goals />} />
+          <Route path="/goals/:goalId" element={<GoalDetailView />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
