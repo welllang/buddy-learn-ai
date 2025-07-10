@@ -321,8 +321,10 @@ const StudyPlanDetail = () => {
                                 <span>{day.time} min</span>
                               </div>
                               {!day.completed && (
-                                <Button size="sm" variant="outline">
-                                  <Play className="h-3 w-3" />
+                                <Button size="sm" variant="outline" asChild>
+                                  <Link to={`/study/session-${week.week}-${day.day}`}>
+                                    <Play className="h-3 w-3" />
+                                  </Link>
                                 </Button>
                               )}
                             </div>
