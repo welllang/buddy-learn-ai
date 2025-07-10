@@ -1303,16 +1303,6 @@ const CreateStudyPlan = () => {
                   </div>
                 )}
               </div>
-                
-                <div className="space-y-2">
-                  <p className="text-muted-foreground">
-                    🤖 AI is analyzing your content and preferences
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    This may take a few moments to create your personalized learning experience
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         );
@@ -1326,8 +1316,7 @@ const CreateStudyPlan = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-background">
-
-      <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 mb-6">
           <Button variant="ghost" size="sm" asChild className="gap-2">
@@ -1399,8 +1388,8 @@ const CreateStudyPlan = () => {
             />
           ))}
         </div>
+        </div>
       </div>
-    </div>
     </>
   );
 };
