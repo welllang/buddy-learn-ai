@@ -10,7 +10,9 @@ import {
   BookOpen,
   Target,
   Clock,
-  Settings
+  Settings,
+  HelpCircle,
+  Phone
 } from "lucide-react";
 
 interface SessionHeaderProps {
@@ -102,6 +104,9 @@ export const SessionHeader = ({
                 </Button>
                 <Button variant="outline" size="icon">
                   <Settings className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="icon" className="text-red-600 hover:text-red-700">
+                  <HelpCircle className="h-4 w-4" />
                 </Button>
               </div>
             </div>

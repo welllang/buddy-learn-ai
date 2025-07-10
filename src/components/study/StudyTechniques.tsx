@@ -17,8 +17,12 @@ import {
   Lightbulb,
   BookOpen,
   MessageSquare,
-  Zap
+  Zap,
+  Settings,
+  TrendingUp
 } from "lucide-react";
+import { ActiveRecall } from "./ActiveRecall";
+import { FeynmanTechnique } from "./FeynmanTechnique";
 
 interface StudyTechniquesProps {
   currentTechnique: string;
@@ -31,6 +35,14 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
   const [isPomodoro, setIsPomodoro] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [pomodoroSession, setPomodoroSession] = useState(1);
+  const [pomodoroSettings, setPomodoroSettings] = useState({
+    focusTime: 25,
+    shortBreak: 5,
+    longBreak: 15,
+    sessionsUntilLongBreak: 4
+  });
+  const [showActiveRecall, setShowActiveRecall] = useState(false);
+  const [showFeynman, setShowFeynman] = useState(false);
   
   const [spacedRepetitionCards, setSpacedRepetitionCards] = useState([
     { id: 1, question: "What is a linked list?", difficulty: 1, nextReview: new Date() },
@@ -64,16 +76,17 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
       // Session ended
       if (isBreak) {
         setIsBreak(false);
-        setPomodoroTime(25 * 60); // Reset to 25 minutes
+        setPomodoroTime(pomodoroSettings.focusTime * 60);
         setPomodoroSession(prev => prev + 1);
       } else {
         setIsBreak(true);
-        setPomodoroTime(5 * 60); // 5 minute break
+        const isLongBreak = pomodoroSession % pomodoroSettings.sessionsUntilLongBreak === 0;
+        setPomodoroTime((isLongBreak ? pomodoroSettings.longBreak : pomodoroSettings.shortBreak) * 60);
       }
       setIsPomodoro(false);
     }
     return () => clearInterval(interval);
-  }, [isPomodoro, pomodoroTime, isBreak]);
+  }, [isPomodoro, pomodoroTime, isBreak, pomodoroSession, pomodoroSettings]);
 
   const startPomodoro = () => {
     setIsPomodoro(true);
@@ -85,7 +98,12 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
 
   const resetPomodoro = () => {
     setIsPomodoro(false);
-    setPomodoroTime(isBreak ? 5 * 60 : 25 * 60);
+    if (isBreak) {
+      const isLongBreak = pomodoroSession % pomodoroSettings.sessionsUntilLongBreak === 0;
+      setPomodoroTime((isLongBreak ? pomodoroSettings.longBreak : pomodoroSettings.shortBreak) * 60);
+    } else {
+      setPomodoroTime(pomodoroSettings.focusTime * 60);
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -98,11 +116,44 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
     setSpacedRepetitionCards(prev => 
       prev.map(card => 
         card.id === cardId 
-          ? { ...card, difficulty: Math.max(1, Math.min(5, difficulty)) }
+          ? { 
+              ...card, 
+              difficulty: Math.max(1, Math.min(5, difficulty)),
+              // Simple spaced repetition algorithm
+              nextReview: new Date(Date.now() + (difficulty * 24 * 60 * 60 * 1000)) // Days based on difficulty
+            }
           : card
       )
     );
   };
+
+  const updatePomodoroSettings = (newSettings: typeof pomodoroSettings) => {
+    setPomodoroSettings(newSettings);
+    // Reset timer with new settings if not currently running
+    if (!isPomodoro) {
+      setPomodoroTime(newSettings.focusTime * 60);
+      setIsBreak(false);
+    }
+  };
+
+  // Show Active Recall or Feynman Technique modals
+  if (showActiveRecall) {
+    return (
+      <ActiveRecall 
+        topic="Linked Lists" 
+        onComplete={() => setShowActiveRecall(false)} 
+      />
+    );
+  }
+
+  if (showFeynman) {
+    return (
+      <FeynmanTechnique 
+        topic="Linked Lists" 
+        onComplete={() => setShowFeynman(false)} 
+      />
+    );
+  }
 
   return (
     <Card>
@@ -114,9 +165,10 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
       </CardHeader>
       <CardContent>
         <Tabs value={currentTechnique} onValueChange={onTechniqueChange} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="pomodoro">Pomodoro</TabsTrigger>
             <TabsTrigger value="spaced">Spaced Rep.</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           
           <TabsContent value="pomodoro" className="space-y-4">
@@ -128,7 +180,9 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
                     isBreak ? 'border-orange-500' : 'border-primary'
                   }`}
                   style={{
-                    transform: `rotate(${360 * (1 - pomodoroTime / (isBreak ? 5 * 60 : 25 * 60))}deg)`
+                    transform: `rotate(${360 * (1 - pomodoroTime / (isBreak 
+                      ? (pomodoroSession % pomodoroSettings.sessionsUntilLongBreak === 0 ? pomodoroSettings.longBreak : pomodoroSettings.shortBreak) * 60
+                      : pomodoroSettings.focusTime * 60))}deg)`
                   }}
                 ></div>
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -186,7 +240,15 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
               
               {spacedRepetitionCards.slice(0, 1).map((card) => (
                 <div key={card.id} className="bg-muted/30 rounded-lg p-4 space-y-3">
-                  <p className="font-medium text-sm">{card.question}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="font-medium text-sm">{card.question}</p>
+                    <Badge variant="outline" className="text-xs">
+                      Level {card.difficulty}
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Next review: {card.nextReview.toLocaleDateString()}
+                  </div>
                   <div className="flex gap-2">
                     <Button 
                       size="sm" 
@@ -213,8 +275,108 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
                       Easy
                     </Button>
                   </div>
+                  
+                  {/* Forgetting Curve Analysis */}
+                  <div className="bg-background/80 rounded p-2 border">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Retention Rate</span>
+                      <span className="font-medium">{Math.max(20, 100 - (card.difficulty * 10))}%</span>
+                    </div>
+                    <Progress 
+                      value={Math.max(20, 100 - (card.difficulty * 10))} 
+                      className="h-1 mt-1" 
+                    />
+                  </div>
                 </div>
               ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="settings" className="space-y-4">
+            <div className="space-y-4">
+              <h4 className="font-semibold text-sm flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Pomodoro Settings
+              </h4>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Focus Time (min)</label>
+                  <input
+                    type="number"
+                    value={pomodoroSettings.focusTime}
+                    onChange={(e) => updatePomodoroSettings({
+                      ...pomodoroSettings,
+                      focusTime: parseInt(e.target.value) || 25
+                    })}
+                    className="w-full px-2 py-1 text-sm border rounded"
+                    min="1"
+                    max="60"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Short Break (min)</label>
+                  <input
+                    type="number"
+                    value={pomodoroSettings.shortBreak}
+                    onChange={(e) => updatePomodoroSettings({
+                      ...pomodoroSettings,
+                      shortBreak: parseInt(e.target.value) || 5
+                    })}
+                    className="w-full px-2 py-1 text-sm border rounded"
+                    min="1"
+                    max="30"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Long Break (min)</label>
+                  <input
+                    type="number"
+                    value={pomodoroSettings.longBreak}
+                    onChange={(e) => updatePomodoroSettings({
+                      ...pomodoroSettings,
+                      longBreak: parseInt(e.target.value) || 15
+                    })}
+                    className="w-full px-2 py-1 text-sm border rounded"
+                    min="1"
+                    max="60"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs font-medium">Sessions Until Long Break</label>
+                  <input
+                    type="number"
+                    value={pomodoroSettings.sessionsUntilLongBreak}
+                    onChange={(e) => updatePomodoroSettings({
+                      ...pomodoroSettings,
+                      sessionsUntilLongBreak: parseInt(e.target.value) || 4
+                    })}
+                    className="w-full px-2 py-1 text-sm border rounded"
+                    min="1"
+                    max="10"
+                  />
+                </div>
+              </div>
+              
+              <div className="bg-muted/30 rounded-lg p-3">
+                <h5 className="font-medium text-sm mb-2 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Productivity Tracking
+                </h5>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Today's Sessions</p>
+                    <p className="font-semibold">{pomodoroSession}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Focus Efficiency</p>
+                    <p className="font-semibold text-success">92%</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -223,11 +385,21 @@ export const StudyTechniques = ({ currentTechnique, onTechniqueChange, isSession
         
         {/* Quick Technique Buttons */}
         <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" size="sm" className="gap-1">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-1"
+            onClick={() => setShowActiveRecall(true)}
+          >
             <Zap className="h-3 w-3" />
             Active Recall
           </Button>
-          <Button variant="outline" size="sm" className="gap-1">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-1"
+            onClick={() => setShowFeynman(true)}
+          >
             <Lightbulb className="h-3 w-3" />
             Feynman Tech.
           </Button>
