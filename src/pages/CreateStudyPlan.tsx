@@ -42,6 +42,7 @@ import {
   Hand
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useCreateStudyPlan } from "@/hooks/useStudyPlans";
 
 interface FormData {
   // Step 1: Basic Information
@@ -73,9 +74,10 @@ const CreateStudyPlan = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [newTopic, setNewTopic] = useState("");
   const [newYoutubeLink, setNewYoutubeLink] = useState("");
+  
+  const createStudyPlan = useCreateStudyPlan();
 
   const [formData, setFormData] = useState<FormData>({
     planName: "",
@@ -194,25 +196,23 @@ const CreateStudyPlan = () => {
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Study Plan Created! 🎉",
-        description: "Your AI-powered study plan has been generated successfully.",
+      await createStudyPlan.mutateAsync({
+        title: formData.planName,
+        subject: formData.subjectCategory,
+        description: formData.description,
+        priority: formData.priorityLevel,
+        target_date: formData.targetDate || null,
+        daily_time_minutes: formData.studyHoursPerDay[0] * 60,
+        difficulty: formData.difficultyLevel,
+        learning_style: formData.studyStyle,
+        ai_generated: true,
+        category: "medium-term",
       });
       
       navigate("/study-plans");
     } catch (error) {
-      toast({
-        title: "Creation Failed",
-        description: "There was an error creating your study plan. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
+      // Error is handled by the hook's onError callback
     }
   };
 
@@ -1179,10 +1179,10 @@ const CreateStudyPlan = () => {
                   <Button
                     size="lg"
                     onClick={handleSubmit}
-                    disabled={isLoading}
+                    disabled={createStudyPlan.isPending}
                     className="relative px-12 py-6 text-lg font-bold bg-gradient-to-r from-primary to-secondary hover:shadow-2xl hover:scale-105 transition-all duration-300 rounded-3xl"
                   >
-                    {isLoading ? (
+                    {createStudyPlan.isPending ? (
                       <>
                         <div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin mr-3"></div>
                         Generating Your AI Study Plan...

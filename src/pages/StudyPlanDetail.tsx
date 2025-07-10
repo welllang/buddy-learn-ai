@@ -30,9 +30,12 @@ import {
   MessageSquare,
   BarChart3,
   Timer,
-  Settings
+  Settings,
+  Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useStudyPlan } from "@/hooks/useStudyPlans";
+import Navbar from "@/components/Navbar";
 
 const ModernProgressBar = ({ progress }: { progress: number }) => {
   return (
@@ -58,62 +61,54 @@ const StudyPlanDetail = () => {
   const { toast } = useToast();
   const [notes, setNotes] = useState("");
 
-  // Mock data - in real app, this would come from API based on ID
-  const studyPlan = {
-    id: parseInt(id || "1"),
-    title: "Computer Science Fundamentals",
-    subject: "Computer Science",
-    description: "Master the core concepts of computer science including data structures, algorithms, and computational thinking.",
-    progress: 65,
-    targetDate: "2024-03-15",
-    dailyTime: 60,
-    difficulty: "Intermediate",
-    status: "active",
-    timeInvested: 24,
-    estimatedTime: 40,
-    lastStudied: "2 hours ago",
-    totalSessions: 12,
-    completedTopics: 8,
-    totalTopics: 15,
-    weeks: [
-      {
-        week: 1,
-        title: "Introduction to Programming",
-        completed: true,
-        days: [
-          { day: 1, topic: "Variables and Data Types", subtopic: "Primitive types, arrays", time: 60, completed: true },
-          { day: 2, topic: "Control Structures", subtopic: "If-else, loops", time: 60, completed: true },
-          { day: 3, topic: "Functions", subtopic: "Function definition, parameters", time: 60, completed: true },
-          { day: 4, topic: "Practice Problems", subtopic: "Basic algorithms", time: 60, completed: true },
-          { day: 5, topic: "Review & Assessment", subtopic: "Week 1 quiz", time: 60, completed: true }
-        ]
-      },
-      {
-        week: 2,
-        title: "Data Structures Basics",
-        completed: false,
-        days: [
-          { day: 1, topic: "Arrays & Lists", subtopic: "Implementation, operations", time: 60, completed: true },
-          { day: 2, topic: "Stacks & Queues", subtopic: "LIFO vs FIFO principles", time: 60, completed: true },
-          { day: 3, topic: "Linked Lists", subtopic: "Singly, doubly linked", time: 60, completed: false },
-          { day: 4, topic: "Trees Introduction", subtopic: "Binary trees, traversal", time: 60, completed: false },
-          { day: 5, topic: "Practice & Review", subtopic: "Implementation exercises", time: 60, completed: false }
-        ]
-      },
-      {
-        week: 3,
-        title: "Algorithm Analysis",
-        completed: false,
-        days: [
-          { day: 1, topic: "Big O Notation", subtopic: "Time & space complexity", time: 60, completed: false },
-          { day: 2, topic: "Sorting Algorithms", subtopic: "Bubble, selection, insertion", time: 60, completed: false },
-          { day: 3, topic: "Search Algorithms", subtopic: "Linear, binary search", time: 60, completed: false },
-          { day: 4, topic: "Advanced Sorting", subtopic: "Merge sort, quick sort", time: 60, completed: false },
-          { day: 5, topic: "Analysis Practice", subtopic: "Algorithm comparison", time: 60, completed: false }
-        ]
-      }
-    ]
-  };
+  // Fetch study plan data
+  const { data: studyPlan, isLoading, error } = useStudyPlan(id || '');
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2">Loading Study Plan...</h1>
+              <div className="animate-pulse space-y-4 mt-8">
+                <div className="h-64 bg-muted rounded-lg"></div>
+                <div className="grid lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2 h-96 bg-muted rounded-lg"></div>
+                  <div className="h-96 bg-muted rounded-lg"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Error state
+  if (error || !studyPlan) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2 text-destructive">Study Plan Not Found</h1>
+              <p className="text-muted-foreground mb-4">
+                {error?.message || "The study plan you're looking for doesn't exist."}
+              </p>
+              <Button onClick={() => navigate('/study-plans')}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Study Plans
+              </Button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   const currentSession = {
     title: "Linked Lists Implementation",
@@ -172,34 +167,8 @@ const StudyPlanDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur sticky top-0 z-40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link to="/dashboard" className="flex items-center space-x-2">
-              <Brain className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">StudyBuddy AI</span>
-            </Link>
-            <nav className="hidden md:flex items-center space-x-1">
-              <Button variant="ghost" asChild>
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-              <Button variant="ghost" className="bg-primary/10 text-primary" asChild>
-                <Link to="/study-plans">Study Plans</Link>
-              </Button>
-              <Button variant="ghost">Schedule</Button>
-              <Button variant="ghost">Progress</Button>
-              <Button variant="ghost">Goals</Button>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-primary">JS</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <>
+      <Navbar />
 
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
@@ -216,48 +185,48 @@ const StudyPlanDetail = () => {
         <Card className="mb-8 bg-gradient-to-r from-primary/5 via-background to-secondary/5 border-primary/20">
           <CardHeader>
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <h1 className="text-3xl font-bold">{studyPlan.title}</h1>
-                  <Badge className={getDifficultyColor(studyPlan.difficulty)} variant="outline">
-                    {studyPlan.difficulty}
-                  </Badge>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <h1 className="text-3xl font-bold">{studyPlan.title}</h1>
+                    <Badge className={getDifficultyColor(studyPlan.difficulty || 'intermediate')} variant="outline">
+                      {studyPlan.difficulty || 'Intermediate'}
+                    </Badge>
+                  </div>
+                  <CardDescription className="text-lg mb-4">
+                    {studyPlan.description}
+                  </CardDescription>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <BookOpen className="h-4 w-4" />
+                    <span className="font-medium">{studyPlan.subject}</span>
+                  </div>
                 </div>
-                <CardDescription className="text-lg mb-4">
-                  {studyPlan.description}
-                </CardDescription>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <BookOpen className="h-4 w-4" />
-                  <span className="font-medium">{studyPlan.subject}</span>
-                </div>
-              </div>
               
-              <div className="lg:w-80">
-                <ModernProgressBar progress={studyPlan.progress} />
-                
-                <div className="grid grid-cols-2 gap-4 mt-6">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Timer className="h-3 w-3" />
-                      <span>Time Invested</span>
-                    </div>
-                    <p className="font-semibold">{studyPlan.timeInvested}h / {studyPlan.estimatedTime}h</p>
-                  </div>
+                <div className="lg:w-80">
+                  <ModernProgressBar progress={studyPlan.progress || 0} />
                   
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Target className="h-3 w-3" />
-                      <span>Target Date</span>
+                  <div className="grid grid-cols-2 gap-4 mt-6">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Timer className="h-3 w-3" />
+                        <span>Time Invested</span>
+                      </div>
+                      <p className="font-semibold">{studyPlan.time_invested_hours || 0}h / {studyPlan.estimated_time_hours || 40}h</p>
                     </div>
-                    <p className="font-semibold">
-                      {new Date(studyPlan.targetDate).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </p>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Target className="h-3 w-3" />
+                        <span>Target Date</span>
+                      </div>
+                      <p className="font-semibold">
+                        {studyPlan.target_date ? new Date(studyPlan.target_date).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric',
+                          year: 'numeric'
+                        }) : 'No deadline'}
+                      </p>
+                    </div>
                   </div>
-                </div>
                 
                 <Button className="w-full mt-4 bg-gradient-to-r from-primary to-secondary">
                   <Edit className="h-4 w-4 mr-2" />
@@ -280,11 +249,11 @@ const StudyPlanDetail = () => {
                 <CardDescription>Week-by-week breakdown of your learning journey</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {studyPlan.weeks.map((week) => (
-                  <div key={week.week} className="space-y-4">
+                {studyPlan.study_plan_weeks?.map((week) => (
+                  <div key={week.id} className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold flex items-center gap-2">
-                        Week {week.week}: {week.title}
+                        Week {week.week_number}: {week.title}
                         {week.completed && <CheckCircle className="h-5 w-5 text-emerald-500" />}
                       </h3>
                       <Button variant="outline" size="sm">
@@ -294,9 +263,9 @@ const StudyPlanDetail = () => {
                     </div>
                     
                     <div className="grid gap-3">
-                      {week.days.map((day) => (
+                      {week.study_plan_days?.map((day) => (
                         <div 
-                          key={day.day} 
+                          key={day.id} 
                           className={`p-4 rounded-lg border transition-all duration-200 ${
                             day.completed 
                               ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800' 
@@ -311,18 +280,18 @@ const StudyPlanDetail = () => {
                                 <Circle className="h-5 w-5 text-muted-foreground" />
                               )}
                               <div>
-                                <h4 className="font-medium">Day {day.day}: {day.topic}</h4>
+                                <h4 className="font-medium">Day {day.day_number}: {day.topic}</h4>
                                 <p className="text-sm text-muted-foreground">{day.subtopic}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <Clock className="h-3 w-3" />
-                                <span>{day.time} min</span>
+                                <span>{day.estimated_time_minutes || 60} min</span>
                               </div>
                               {!day.completed && (
                                 <Button size="sm" variant="outline" asChild>
-                                  <Link to={`/study/session-${week.week}-${day.day}`}>
+                                  <Link to={`/study/${day.id}`}>
                                     <Play className="h-3 w-3" />
                                   </Link>
                                 </Button>
@@ -333,7 +302,15 @@ const StudyPlanDetail = () => {
                       ))}
                     </div>
                   </div>
-                ))}
+                )) || (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">No study weeks available yet.</p>
+                    <Button className="mt-4">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Study Weeks
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -552,7 +529,7 @@ const StudyPlanDetail = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

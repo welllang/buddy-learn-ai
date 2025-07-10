@@ -30,7 +30,7 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useStudyPlans, useCreateStudyPlan, useDeleteStudyPlan } from "@/hooks/useStudyPlans";
 
 const ModernProgressBar = ({ progress }: { progress: number }) => {
   return (
@@ -52,69 +52,13 @@ const ModernProgressBar = ({ progress }: { progress: number }) => {
 
 const StudyPlans = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState("active");
   const { toast } = useToast();
 
-  // Demo study plans data
-  const studyPlans = [
-    {
-      id: 1,
-      title: "Computer Science Fundamentals",
-      subject: "Computer Science",
-      progress: 65,
-      targetDate: "2024-03-15",
-      dailyTime: 60,
-      difficulty: "Intermediate",
-      status: "active",
-      lastStudied: "2 hours ago",
-      totalSessions: 12,
-      completedTopics: 8,
-      totalTopics: 15
-    },
-    {
-      id: 2,
-      title: "Calculus Mastery",
-      subject: "Mathematics",
-      progress: 40,
-      targetDate: "2024-02-28",
-      dailyTime: 45,
-      difficulty: "Advanced",
-      status: "active",
-      lastStudied: "Yesterday",
-      totalSessions: 8,
-      completedTopics: 5,
-      totalTopics: 12
-    },
-    {
-      id: 3,
-      title: "Physics Principles",
-      subject: "Physics",
-      progress: 100,
-      targetDate: "2024-01-30",
-      dailyTime: 30,
-      difficulty: "Beginner",
-      status: "completed",
-      lastStudied: "1 week ago",
-      totalSessions: 20,
-      completedTopics: 10,
-      totalTopics: 10
-    },
-    {
-      id: 4,
-      title: "Spanish Conversation",
-      subject: "Languages",
-      progress: 25,
-      targetDate: "2024-04-20",
-      dailyTime: 45,
-      difficulty: "Intermediate",
-      status: "paused",
-      lastStudied: "3 days ago",
-      totalSessions: 5,
-      completedTopics: 3,
-      totalTopics: 12
-    }
-  ];
+  // Fetch study plans data
+  const { data: studyPlans = [], isLoading, error } = useStudyPlans();
+  const createStudyPlan = useCreateStudyPlan();
+  const deleteStudyPlan = useDeleteStudyPlan();
 
   const [formData, setFormData] = useState({
     subject: "",
@@ -135,47 +79,27 @@ const StudyPlans = () => {
       return;
     }
 
-    setLoading(true);
-    
-    try {
-      const response = await fetch('/functions/v1/generate-study-plan', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+    // Create basic study plan
+    createStudyPlan.mutate({
+      title: `${formData.subject} Study Plan`,
+      subject: formData.subject,
+      description: formData.goals,
+      difficulty: formData.difficultyLevel,
+      daily_time_minutes: parseInt(formData.dailyTime),
+      target_date: formData.targetDate || null,
+      learning_style: formData.learningStyle,
+      ai_generated: true,
+    });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate study plan');
-      }
-
-      const data = await response.json();
-      
-      toast({
-        title: "Study Plan Generated! 🎉",
-        description: "Your AI-powered study plan has been created successfully.",
-      });
-      
-      setShowCreateForm(false);
-      setFormData({
-        subject: "",
-        goals: "",
-        targetDate: "",
-        dailyTime: "60",
-        difficultyLevel: "intermediate",
-        learningStyle: "visual"
-      });
-
-    } catch (error) {
-      toast({
-        title: "Generation Failed",
-        description: "There was an error generating your study plan. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
+    setShowCreateForm(false);
+    setFormData({
+      subject: "",
+      goals: "",
+      targetDate: "",
+      dailyTime: "60",
+      difficultyLevel: "intermediate",
+      learningStyle: "visual"
+    });
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -200,6 +124,46 @@ const StudyPlans = () => {
     if (activeFilter === "all") return true;
     return plan.status === activeFilter;
   });
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2">Loading Study Plans...</h1>
+              <div className="animate-pulse">
+                <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-64 bg-muted rounded-lg"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2 text-destructive">Error Loading Study Plans</h1>
+              <p className="text-muted-foreground">{error.message}</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -367,15 +331,15 @@ const StudyPlans = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button 
+                  <Button 
                   onClick={generateStudyPlan} 
-                  disabled={loading}
+                  disabled={createStudyPlan.isPending}
                   className="bg-gradient-to-r from-primary to-secondary"
                 >
-                  {loading ? "Generating..." : (
+                  {createStudyPlan.isPending ? "Creating..." : (
                     <>
                       <Brain className="h-4 w-4 mr-2" />
-                      Generate Study Plan
+                      Create Study Plan
                     </>
                   )}
                 </Button>
@@ -413,13 +377,13 @@ const StudyPlans = () => {
                         <span className="font-medium">{plan.subject}</span>
                       </div>
                     </div>
-                    <Badge className={getDifficultyColor(plan.difficulty)} variant="outline">
-                      {plan.difficulty}
+                    <Badge className={getDifficultyColor(plan.difficulty || 'intermediate')} variant="outline">
+                      {plan.difficulty || 'Intermediate'}
                     </Badge>
                   </div>
                   
                   {/* Modern Progress Bar */}
-                  <ModernProgressBar progress={plan.progress} />
+                  <ModernProgressBar progress={plan.progress || 0} />
                 </div>
 
                 {/* Content Section */}
@@ -432,11 +396,11 @@ const StudyPlans = () => {
                         <span>Target Date</span>
                       </div>
                       <p className="font-semibold text-sm">
-                        {new Date(plan.targetDate).toLocaleDateString('en-US', { 
+                        {plan.target_date ? new Date(plan.target_date).toLocaleDateString('en-US', { 
                           month: 'short', 
                           day: 'numeric',
                           year: 'numeric'
-                        })}
+                        }) : 'No deadline'}
                       </p>
                     </div>
                     
@@ -445,7 +409,7 @@ const StudyPlans = () => {
                         <Clock className="h-3 w-3" />
                         <span>Daily Goal</span>
                       </div>
-                      <p className="font-semibold text-sm">{plan.dailyTime} minutes</p>
+                      <p className="font-semibold text-sm">{plan.daily_time_minutes || 60} minutes</p>
                     </div>
                     
                     <div className="space-y-1">
@@ -453,7 +417,7 @@ const StudyPlans = () => {
                         <TrendingUp className="h-3 w-3" />
                         <span>Sessions</span>
                       </div>
-                      <p className="font-semibold text-sm">{plan.totalSessions} completed</p>
+                      <p className="font-semibold text-sm">0 completed</p>
                     </div>
                     
                     <div className="space-y-1">
@@ -461,7 +425,7 @@ const StudyPlans = () => {
                         <BookOpen className="h-3 w-3" />
                         <span>Topics</span>
                       </div>
-                      <p className="font-semibold text-sm">{plan.completedTopics}/{plan.totalTopics}</p>
+                      <p className="font-semibold text-sm">0/0</p>
                     </div>
                   </div>
 
@@ -469,7 +433,12 @@ const StudyPlans = () => {
                   <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">Last studied</span>
-                      <span className="text-xs font-medium">{plan.lastStudied}</span>
+                      <span className="text-xs font-medium">
+                        {new Date(plan.updated_at).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric'
+                        })}
+                      </span>
                     </div>
                   </div>
                   
