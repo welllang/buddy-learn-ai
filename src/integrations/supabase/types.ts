@@ -47,6 +47,65 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_interactions: {
+        Row: {
+          ai_response: string
+          context_data: Json | null
+          created_at: string
+          difficulty_level: string | null
+          feedback_rating: number | null
+          id: string
+          interaction_type: string
+          model_version: string | null
+          response_time_ms: number | null
+          session_id: string | null
+          topic: string | null
+          user_id: string
+          user_input: string | null
+          was_helpful: boolean | null
+        }
+        Insert: {
+          ai_response: string
+          context_data?: Json | null
+          created_at?: string
+          difficulty_level?: string | null
+          feedback_rating?: number | null
+          id?: string
+          interaction_type: string
+          model_version?: string | null
+          response_time_ms?: number | null
+          session_id?: string | null
+          topic?: string | null
+          user_id: string
+          user_input?: string | null
+          was_helpful?: boolean | null
+        }
+        Update: {
+          ai_response?: string
+          context_data?: Json | null
+          created_at?: string
+          difficulty_level?: string | null
+          feedback_rating?: number | null
+          id?: string
+          interaction_type?: string
+          model_version?: string | null
+          response_time_ms?: number | null
+          session_id?: string | null
+          topic?: string | null
+          user_id?: string
+          user_input?: string | null
+          was_helpful?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_interactions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goal_action_items: {
         Row: {
           completed_at: string | null
@@ -218,6 +277,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          notification_type: string
+          priority: string | null
+          scheduled_for: string | null
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          priority?: string | null
+          scheduled_for?: string | null
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          priority?: string | null
+          scheduled_for?: string | null
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           adaptive_learning: boolean | null
@@ -343,6 +447,795 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      schedule_events: {
+        Row: {
+          all_day: boolean | null
+          color: string | null
+          created_at: string
+          description: string | null
+          end_time: string
+          event_type: string
+          external_calendar_id: string | null
+          id: string
+          location: string | null
+          metadata: Json | null
+          priority: string | null
+          recurring_pattern: string | null
+          recurring_until: string | null
+          reminder_minutes: number[] | null
+          session_id: string | null
+          start_time: string
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          all_day?: boolean | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          end_time: string
+          event_type: string
+          external_calendar_id?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          priority?: string | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          reminder_minutes?: number[] | null
+          session_id?: string | null
+          start_time: string
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          all_day?: boolean | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          event_type?: string
+          external_calendar_id?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          priority?: string | null
+          recurring_pattern?: string | null
+          recurring_until?: string | null
+          reminder_minutes?: number[] | null
+          session_id?: string | null
+          start_time?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedule_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_analytics: {
+        Row: {
+          average_confidence: number | null
+          average_effectiveness: number | null
+          average_focus_level: number | null
+          break_time_minutes: number | null
+          completed_objectives: number | null
+          created_at: string
+          date: string
+          distraction_count: number | null
+          id: string
+          month_start: string
+          productivity_score: number | null
+          retention_score: number | null
+          session_count: number | null
+          session_id: string | null
+          streak_days: number | null
+          study_plan_id: string | null
+          subjects_studied: string[] | null
+          techniques_used: string[] | null
+          total_objectives: number | null
+          total_study_time_minutes: number | null
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          average_confidence?: number | null
+          average_effectiveness?: number | null
+          average_focus_level?: number | null
+          break_time_minutes?: number | null
+          completed_objectives?: number | null
+          created_at?: string
+          date?: string
+          distraction_count?: number | null
+          id?: string
+          month_start: string
+          productivity_score?: number | null
+          retention_score?: number | null
+          session_count?: number | null
+          session_id?: string | null
+          streak_days?: number | null
+          study_plan_id?: string | null
+          subjects_studied?: string[] | null
+          techniques_used?: string[] | null
+          total_objectives?: number | null
+          total_study_time_minutes?: number | null
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          average_confidence?: number | null
+          average_effectiveness?: number | null
+          average_focus_level?: number | null
+          break_time_minutes?: number | null
+          completed_objectives?: number | null
+          created_at?: string
+          date?: string
+          distraction_count?: number | null
+          id?: string
+          month_start?: string
+          productivity_score?: number | null
+          retention_score?: number | null
+          session_count?: number | null
+          session_id?: string | null
+          streak_days?: number | null
+          study_plan_id?: string | null
+          subjects_studied?: string[] | null
+          techniques_used?: string[] | null
+          total_objectives?: number | null
+          total_study_time_minutes?: number | null
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_analytics_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_analytics_study_plan_id_fkey"
+            columns: ["study_plan_id"]
+            isOneToOne: false
+            referencedRelation: "study_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_materials: {
+        Row: {
+          author: string | null
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          duration_minutes: number | null
+          file_path: string | null
+          file_size: number | null
+          id: string
+          is_required: boolean | null
+          material_type: string
+          order_index: number | null
+          page_end: number | null
+          page_start: number | null
+          session_id: string | null
+          study_plan_id: string | null
+          tags: string[] | null
+          title: string
+          url: string | null
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration_minutes?: number | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          is_required?: boolean | null
+          material_type: string
+          order_index?: number | null
+          page_end?: number | null
+          page_start?: number | null
+          session_id?: string | null
+          study_plan_id?: string | null
+          tags?: string[] | null
+          title: string
+          url?: string | null
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration_minutes?: number | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          is_required?: boolean | null
+          material_type?: string
+          order_index?: number | null
+          page_end?: number | null
+          page_start?: number | null
+          session_id?: string | null
+          study_plan_id?: string | null
+          tags?: string[] | null
+          title?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_materials_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_materials_study_plan_id_fkey"
+            columns: ["study_plan_id"]
+            isOneToOne: false
+            referencedRelation: "study_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_favorite: boolean | null
+          material_id: string | null
+          note_type: string | null
+          order_index: number | null
+          parent_note_id: string | null
+          session_id: string | null
+          study_plan_id: string | null
+          tags: string[] | null
+          title: string | null
+          updated_at: string
+          user_id: string
+          visibility: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          material_id?: string | null
+          note_type?: string | null
+          order_index?: number | null
+          parent_note_id?: string | null
+          session_id?: string | null
+          study_plan_id?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+          visibility?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          material_id?: string | null
+          note_type?: string | null
+          order_index?: number | null
+          parent_note_id?: string | null
+          session_id?: string | null
+          study_plan_id?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_notes_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "study_materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_notes_parent_note_id_fkey"
+            columns: ["parent_note_id"]
+            isOneToOne: false
+            referencedRelation: "study_notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_notes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_notes_study_plan_id_fkey"
+            columns: ["study_plan_id"]
+            isOneToOne: false
+            referencedRelation: "study_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_plan_days: {
+        Row: {
+          completed: boolean | null
+          created_at: string
+          day_number: number
+          difficulty: string | null
+          estimated_time_minutes: number | null
+          id: string
+          study_method: string | null
+          subtopic: string | null
+          topic: string
+          week_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string
+          day_number: number
+          difficulty?: string | null
+          estimated_time_minutes?: number | null
+          id?: string
+          study_method?: string | null
+          subtopic?: string | null
+          topic: string
+          week_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string
+          day_number?: number
+          difficulty?: string | null
+          estimated_time_minutes?: number | null
+          id?: string
+          study_method?: string | null
+          subtopic?: string | null
+          topic?: string
+          week_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_plan_days_week_id_fkey"
+            columns: ["week_id"]
+            isOneToOne: false
+            referencedRelation: "study_plan_weeks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_plan_weeks: {
+        Row: {
+          completed: boolean | null
+          created_at: string
+          description: string | null
+          id: string
+          study_plan_id: string
+          title: string
+          week_number: number
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          study_plan_id: string
+          title: string
+          week_number: number
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          study_plan_id?: string
+          title?: string
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_plan_weeks_study_plan_id_fkey"
+            columns: ["study_plan_id"]
+            isOneToOne: false
+            referencedRelation: "study_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_plans: {
+        Row: {
+          ai_generated: boolean | null
+          category: string | null
+          created_at: string
+          daily_time_minutes: number | null
+          description: string | null
+          difficulty: string | null
+          estimated_time_hours: number | null
+          id: string
+          learning_style: string | null
+          metadata: Json | null
+          priority: string | null
+          progress: number | null
+          status: string | null
+          subject: string
+          target_date: string | null
+          time_invested_hours: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_generated?: boolean | null
+          category?: string | null
+          created_at?: string
+          daily_time_minutes?: number | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_time_hours?: number | null
+          id?: string
+          learning_style?: string | null
+          metadata?: Json | null
+          priority?: string | null
+          progress?: number | null
+          status?: string | null
+          subject: string
+          target_date?: string | null
+          time_invested_hours?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_generated?: boolean | null
+          category?: string | null
+          created_at?: string
+          daily_time_minutes?: number | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_time_hours?: number | null
+          id?: string
+          learning_style?: string | null
+          metadata?: Json | null
+          priority?: string | null
+          progress?: number | null
+          status?: string | null
+          subject?: string
+          target_date?: string | null
+          time_invested_hours?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      study_sessions: {
+        Row: {
+          breaks_taken: number | null
+          completed_objectives: string[] | null
+          confidence_rating: number | null
+          created_at: string
+          day_id: string | null
+          distractions_count: number | null
+          duration_minutes: number | null
+          effectiveness_rating: number | null
+          end_time: string | null
+          energy_level: string | null
+          focus_level: number | null
+          id: string
+          location: string | null
+          notes: string | null
+          objectives: string[] | null
+          progress: number | null
+          session_type: string | null
+          start_time: string | null
+          status: string | null
+          study_method: string | null
+          study_plan_id: string | null
+          subtopic: string | null
+          techniques_used: string[] | null
+          title: string
+          topic: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          breaks_taken?: number | null
+          completed_objectives?: string[] | null
+          confidence_rating?: number | null
+          created_at?: string
+          day_id?: string | null
+          distractions_count?: number | null
+          duration_minutes?: number | null
+          effectiveness_rating?: number | null
+          end_time?: string | null
+          energy_level?: string | null
+          focus_level?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          objectives?: string[] | null
+          progress?: number | null
+          session_type?: string | null
+          start_time?: string | null
+          status?: string | null
+          study_method?: string | null
+          study_plan_id?: string | null
+          subtopic?: string | null
+          techniques_used?: string[] | null
+          title: string
+          topic?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          breaks_taken?: number | null
+          completed_objectives?: string[] | null
+          confidence_rating?: number | null
+          created_at?: string
+          day_id?: string | null
+          distractions_count?: number | null
+          duration_minutes?: number | null
+          effectiveness_rating?: number | null
+          end_time?: string | null
+          energy_level?: string | null
+          focus_level?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          objectives?: string[] | null
+          progress?: number | null
+          session_type?: string | null
+          start_time?: string | null
+          status?: string | null
+          study_method?: string | null
+          study_plan_id?: string | null
+          subtopic?: string | null
+          techniques_used?: string[] | null
+          title?: string
+          topic?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sessions_day_id_fkey"
+            columns: ["day_id"]
+            isOneToOne: false
+            referencedRelation: "study_plan_days"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sessions_study_plan_id_fkey"
+            columns: ["study_plan_id"]
+            isOneToOne: false
+            referencedRelation: "study_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          amount: number | null
+          billing_cycle: string | null
+          cancel_at_period_end: boolean | null
+          created_at: string
+          currency: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          plan_name: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_end: string | null
+          updated_at: string
+          usage_limits: Json | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          billing_cycle?: string | null
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          currency?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_name?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string
+          usage_limits?: Json | null
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          billing_cycle?: string | null
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          currency?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_name?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string
+          usage_limits?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_messages: {
+        Row: {
+          attachments: Json | null
+          created_at: string
+          id: string
+          is_internal: boolean | null
+          message_content: string
+          sender_name: string | null
+          sender_type: string
+          ticket_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          created_at?: string
+          id?: string
+          is_internal?: boolean | null
+          message_content: string
+          sender_name?: string | null
+          sender_type: string
+          ticket_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          created_at?: string
+          id?: string
+          is_internal?: boolean | null
+          message_content?: string
+          sender_name?: string | null
+          sender_type?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          priority: string | null
+          resolution: string | null
+          resolved_at: string | null
+          satisfaction_rating: number | null
+          status: string | null
+          subject: string
+          ticket_number: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          priority?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          satisfaction_rating?: number | null
+          status?: string | null
+          subject: string
+          ticket_number: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: string | null
+          resolution?: string | null
+          resolved_at?: string | null
+          satisfaction_rating?: number | null
+          status?: string | null
+          subject?: string
+          ticket_number?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_tracking: {
+        Row: {
+          ai_sessions_used: number | null
+          api_calls_made: number | null
+          created_at: string
+          features_used: Json | null
+          id: string
+          period_end: string
+          period_start: string
+          storage_used_mb: number | null
+          study_plans_created: number | null
+          subscription_id: string | null
+          support_tickets_created: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_sessions_used?: number | null
+          api_calls_made?: number | null
+          created_at?: string
+          features_used?: Json | null
+          id?: string
+          period_end: string
+          period_start: string
+          storage_used_mb?: number | null
+          study_plans_created?: number | null
+          subscription_id?: string | null
+          support_tickets_created?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_sessions_used?: number | null
+          api_calls_made?: number | null
+          created_at?: string
+          features_used?: Json | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          storage_used_mb?: number | null
+          study_plans_created?: number | null
+          subscription_id?: string | null
+          support_tickets_created?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_tracking_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_achievements: {
         Row: {
