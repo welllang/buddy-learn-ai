@@ -175,8 +175,8 @@ const Landing = () => {
                 </CardContent>
               </Card>
 
-              {/* Floating testimonial - Fixed positioning */}
-              <div className="absolute -right-2 -top-2 bg-background border border-border rounded-lg p-3 shadow-lg w-56 hidden xl:block z-10">
+              {/* Floating testimonial - Better positioned */}
+              <div className="absolute -right-4 -bottom-4 bg-background border border-border rounded-lg p-3 shadow-lg max-w-[200px] hidden lg:block z-10">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white text-xs font-bold">
                     S
@@ -214,7 +214,7 @@ const Landing = () => {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Free Plan */}
-            <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-muted/5 to-background">
               <CardContent className="p-8">
                 <div className="text-center mb-6">
                   <h3 className="text-xl font-semibold mb-2 text-foreground">Free</h3>
@@ -222,25 +222,25 @@ const Landing = () => {
                   <div className="text-sm text-muted-foreground">Forever free</div>
                 </div>
                 <ul className="space-y-3 mb-8">
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Basic study planning</span>
+                    <span className="text-sm text-foreground">Basic study planning</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Progress tracking</span>
+                    <span className="text-sm text-foreground">Progress tracking</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">3 active study plans</span>
+                    <span className="text-sm text-foreground">3 active study plans</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Mobile app access</span>
+                    <span className="text-sm text-foreground">Mobile app access</span>
                   </li>
                 </ul>
                 <Link to="/auth" className="block">
-                  <Button variant="outline" className="w-full border-primary/50 text-primary hover:bg-primary/10">
+                  <Button variant="outline" className="w-full border-primary/50 text-primary hover:bg-primary/10 hover:text-primary">
                     Get Started Free
                   </Button>
                 </Link>
@@ -248,7 +248,7 @@ const Landing = () => {
             </Card>
 
             {/* Pro Plan - Most Popular */}
-            <Card className="border-primary shadow-lg relative hover:shadow-xl transition-all duration-300">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-primary shadow-lg relative bg-gradient-to-br from-primary/5 to-background">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-primary text-white border-0 px-4 py-1">Most Popular</Badge>
               </div>
@@ -259,29 +259,29 @@ const Landing = () => {
                   <div className="text-sm text-muted-foreground">per month</div>
                 </div>
                 <ul className="space-y-3 mb-8">
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">AI-powered study plans</span>
+                    <span className="text-sm text-foreground">AI-powered study plans</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Advanced analytics</span>
+                    <span className="text-sm text-foreground">Advanced analytics</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Unlimited study plans</span>
+                    <span className="text-sm text-foreground">Unlimited study plans</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Calendar integration</span>
+                    <span className="text-sm text-foreground">Calendar integration</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Priority support</span>
+                    <span className="text-sm text-foreground">Priority support</span>
                   </li>
                 </ul>
                 <Link to="/auth" className="block">
-                  <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white">
+                  <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg transition-all">
                     Start Free Trial
                   </Button>
                 </Link>
@@ -289,7 +289,7 @@ const Landing = () => {
             </Card>
 
             {/* Student Plan */}
-            <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-success/5 to-background">
               <CardContent className="p-8">
                 <div className="text-center mb-6">
                   <h3 className="text-xl font-semibold mb-2 text-foreground">Student</h3>
@@ -298,25 +298,25 @@ const Landing = () => {
                   <Badge className="bg-success/10 text-success border-success/20 mt-2">50% Off</Badge>
                 </div>
                 <ul className="space-y-3 mb-8">
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">All Pro features</span>
+                    <span className="text-sm text-foreground">All Pro features</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Student discount pricing</span>
+                    <span className="text-sm text-foreground">Student discount pricing</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Verify with .edu email</span>
+                    <span className="text-sm text-foreground">Verify with .edu email</span>
                   </li>
-                  <li className="flex items-center text-foreground">
+                  <li className="flex items-center">
                     <CheckCircle className="h-4 w-4 text-success mr-3 flex-shrink-0" />
-                    <span className="text-sm">Extended trial period</span>
+                    <span className="text-sm text-foreground">Extended trial period</span>
                   </li>
                 </ul>
                 <Link to="/auth" className="block">
-                  <Button variant="outline" className="w-full border-success/50 text-success hover:bg-success/10">
+                  <Button variant="outline" className="w-full border-success/50 text-success hover:bg-success/10 hover:text-success">
                     Claim Student Discount
                   </Button>
                 </Link>
@@ -381,12 +381,12 @@ const Landing = () => {
 
           {/* Feature Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/50">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-primary/5 to-background hover:from-primary/10 hover:to-background">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:from-primary group-hover:to-primary/80 group-hover:text-white transition-all">
-                  <Brain className="h-6 w-6 text-primary group-hover:text-white" />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <Brain className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">AI Study Plans</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">AI Study Plans</h3>
                 <p className="text-muted-foreground mb-4">
                   Personalized schedules that adapt to your learning style, pace, and goals in real-time.
                 </p>
@@ -396,27 +396,27 @@ const Landing = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-success/50">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-secondary/5 to-background hover:from-secondary/10 hover:to-background">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-success/20 to-success/10 rounded-lg flex items-center justify-center mb-4 group-hover:from-success group-hover:to-success/80 group-hover:text-white transition-all">
-                  <BarChart3 className="h-6 w-6 text-success group-hover:text-white" />
+                <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors">
+                  <BarChart3 className="h-6 w-6 text-secondary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 group-hover:text-success transition-colors">Progress Analytics</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">Progress Analytics</h3>
                 <p className="text-muted-foreground mb-4">
                   Detailed insights into study patterns, retention rates, and performance trends.
                 </p>
-                <div className="text-sm text-success font-medium">
+                <div className="text-sm text-secondary font-medium">
                   ✓ Performance tracking  ✓ Retention analysis  ✓ Trend prediction
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-accent/50">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-accent/5 to-background hover:from-accent/10 hover:to-background">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg flex items-center justify-center mb-4 group-hover:from-accent group-hover:to-accent/80 group-hover:text-white transition-all">
-                  <Clock className="h-6 w-6 text-accent group-hover:text-white" />
+                <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                  <Clock className="h-6 w-6 text-accent" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 group-hover:text-accent transition-colors">Smart Scheduling</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">Smart Scheduling</h3>
                 <p className="text-muted-foreground mb-4">
                   Intelligent scheduling that finds your optimal study times and keeps you on track.
                 </p>
@@ -426,46 +426,46 @@ const Landing = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-secondary/50">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-purple-500/5 to-background hover:from-purple-500/10 hover:to-background">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-lg flex items-center justify-center mb-4 group-hover:from-secondary group-hover:to-secondary/80 group-hover:text-white transition-all">
-                  <Target className="h-6 w-6 text-secondary group-hover:text-white" />
+                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/30 transition-colors">
+                  <BookOpen className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 group-hover:text-secondary transition-colors">Learning Techniques</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">Learning Techniques</h3>
                 <p className="text-muted-foreground mb-4">
                   Spaced repetition, active recall, and proven methods tailored to your needs.
                 </p>
-                <div className="text-sm text-secondary font-medium">
+                <div className="text-sm text-purple-600 dark:text-purple-400 font-medium">
                   ✓ Spaced repetition  ✓ Active recall  ✓ Feynman technique
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-warning/50">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-success/5 to-background hover:from-success/10 hover:to-background">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-warning/20 to-warning/10 rounded-lg flex items-center justify-center mb-4 group-hover:from-warning group-hover:to-warning/80 group-hover:text-white transition-all">
-                  <Smartphone className="h-6 w-6 text-warning group-hover:text-white" />
+                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-success/20 transition-colors">
+                  <Smartphone className="h-6 w-6 text-success" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 group-hover:text-warning transition-colors">Mobile Learning</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">Mobile Learning</h3>
                 <p className="text-muted-foreground mb-4">
                   Study anywhere, anytime with responsive design and offline capabilities.
                 </p>
-                <div className="text-sm text-warning font-medium">
+                <div className="text-sm text-success font-medium">
                   ✓ Offline mode  ✓ Mobile first  ✓ Cross-device sync
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-purple-500/50">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 bg-gradient-to-br from-warning/5 to-background hover:from-warning/10 hover:to-background">
               <CardContent className="p-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:from-purple-500 group-hover:to-purple-500/80 group-hover:text-white transition-all">
-                  <Trophy className="h-6 w-6 text-purple-500 group-hover:text-white" />
+                <div className="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-warning/20 transition-colors">
+                  <Trophy className="h-6 w-6 text-warning" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-500 transition-colors">Gamification</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">Gamification</h3>
                 <p className="text-muted-foreground mb-4">
                   Streaks, achievements, and rewards that keep you motivated and engaged.
                 </p>
-                <div className="text-sm text-purple-500 font-medium">
+                <div className="text-sm text-warning font-medium">
                   ✓ Achievement system  ✓ Study streaks  ✓ Leaderboards
                 </div>
               </CardContent>
