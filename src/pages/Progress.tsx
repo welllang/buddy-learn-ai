@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   TrendingUp, 
   BarChart3, 
@@ -24,7 +26,11 @@ import {
   Lightbulb,
   AlertCircle,
   CheckCircle2,
-  Star
+  Star,
+  Timer,
+  Users,
+  Eye,
+  Settings
 } from "lucide-react";
 import { 
   LineChart, 
@@ -92,6 +98,25 @@ const ProgressPage = () => {
       { duration: '45-60 min', effectiveness: 91, count: 18 },
       { duration: '90+ min', effectiveness: 76, count: 8 }
     ]
+  };
+
+  // Productivity heatmap data
+  const heatmapData = [
+    { day: 'Monday', hour6: 2, hour9: 4, hour12: 3, hour15: 5, hour18: 3, hour21: 2 },
+    { day: 'Tuesday', hour6: 1, hour9: 5, hour12: 4, hour15: 4, hour18: 2, hour21: 1 },
+    { day: 'Wednesday', hour6: 3, hour9: 4, hour12: 5, hour15: 3, hour18: 4, hour21: 3 },
+    { day: 'Thursday', hour6: 2, hour9: 5, hour12: 3, hour15: 4, hour18: 3, hour21: 2 },
+    { day: 'Friday', hour6: 1, hour9: 3, hour12: 4, hour15: 5, hour18: 2, hour21: 1 },
+    { day: 'Saturday', hour6: 4, hour9: 3, hour12: 2, hour15: 3, hour18: 5, hour21: 4 },
+    { day: 'Sunday', hour6: 3, hour9: 2, hour12: 3, hour15: 2, hour18: 4, hour21: 5 },
+  ];
+
+  // Comparison periods data
+  const comparisonData = {
+    thisWeek: { hours: 28.5, sessions: 12, efficiency: 85 },
+    lastWeek: { hours: 24.2, sessions: 10, efficiency: 82 },
+    thisMonth: { hours: 115.5, sessions: 48, efficiency: 84 },
+    lastMonth: { hours: 98.3, sessions: 42, efficiency: 79 }
   };
 
   const aiInsights = [
@@ -352,8 +377,114 @@ const ProgressPage = () => {
                 </Card>
               </div>
 
+              {/* Productivity Heatmap & Comparison */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-accent/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Timer className="h-5 w-5 mr-2 text-accent" />
+                      Productivity Heatmap
+                    </CardTitle>
+                    <CardDescription>Study intensity across days and hours</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-7 gap-1 text-xs text-muted-foreground mb-2">
+                        <div className="text-center">6AM</div>
+                        <div className="text-center">9AM</div>
+                        <div className="text-center">12PM</div>
+                        <div className="text-center">3PM</div>
+                        <div className="text-center">6PM</div>
+                        <div className="text-center">9PM</div>
+                        <div></div>
+                      </div>
+                      {heatmapData.map((day, dayIndex) => (
+                        <div key={dayIndex} className="grid grid-cols-7 gap-1 items-center">
+                          <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${day.hour6 * 0.2})` }} />
+                          <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${day.hour9 * 0.2})` }} />
+                          <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${day.hour12 * 0.2})` }} />
+                          <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${day.hour15 * 0.2})` }} />
+                          <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${day.hour18 * 0.2})` }} />
+                          <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${day.hour21 * 0.2})` }} />
+                          <span className="text-xs text-muted-foreground ml-2">{day.day.slice(0, 3)}</span>
+                        </div>
+                      ))}
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mt-3">
+                        <span>Less</span>
+                        <div className="flex space-x-1">
+                          {[1, 2, 3, 4, 5].map(level => (
+                            <div key={level} className="w-3 h-3 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${level * 0.2})` }} />
+                          ))}
+                        </div>
+                        <span>More</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-muted-foreground/20">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <BarChart3 className="h-5 w-5 mr-2 text-muted-foreground" />
+                      Period Comparison
+                    </CardTitle>
+                    <CardDescription>Performance across different time periods</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Tabs defaultValue="weekly" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                        <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="weekly" className="space-y-4 mt-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="p-3 rounded-lg bg-card border">
+                            <p className="text-xs text-muted-foreground">This Week</p>
+                            <p className="text-lg font-bold text-foreground">{comparisonData.thisWeek.hours}h</p>
+                            <p className="text-xs text-green-600">+{((comparisonData.thisWeek.hours - comparisonData.lastWeek.hours) / comparisonData.lastWeek.hours * 100).toFixed(1)}%</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-muted/50">
+                            <p className="text-xs text-muted-foreground">Last Week</p>
+                            <p className="text-lg font-bold text-muted-foreground">{comparisonData.lastWeek.hours}h</p>
+                            <p className="text-xs text-muted-foreground">{comparisonData.lastWeek.sessions} sessions</p>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Efficiency</span>
+                            <span className="font-medium">{comparisonData.thisWeek.efficiency}%</span>
+                          </div>
+                          <Progress value={comparisonData.thisWeek.efficiency} className="h-2" />
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="monthly" className="space-y-4 mt-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="p-3 rounded-lg bg-card border">
+                            <p className="text-xs text-muted-foreground">This Month</p>
+                            <p className="text-lg font-bold text-foreground">{comparisonData.thisMonth.hours}h</p>
+                            <p className="text-xs text-green-600">+{((comparisonData.thisMonth.hours - comparisonData.lastMonth.hours) / comparisonData.lastMonth.hours * 100).toFixed(1)}%</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-muted/50">
+                            <p className="text-xs text-muted-foreground">Last Month</p>
+                            <p className="text-lg font-bold text-muted-foreground">{comparisonData.lastMonth.hours}h</p>
+                            <p className="text-xs text-muted-foreground">{comparisonData.lastMonth.sessions} sessions</p>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Efficiency</span>
+                            <span className="font-medium">{comparisonData.thisMonth.efficiency}%</span>
+                          </div>
+                          <Progress value={comparisonData.thisMonth.efficiency} className="h-2" />
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </div>
+
               {/* Study Patterns Analysis */}
-              <Card>
+              <Card className="border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-purple-500/10">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <MapPin className="h-5 w-5 mr-2 text-purple-600" />
@@ -364,12 +495,15 @@ const ProgressPage = () => {
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold mb-3 text-sm">Optimal Study Times</h4>
+                      <h4 className="font-semibold mb-3 text-sm flex items-center">
+                        <Clock className="h-4 w-4 mr-2" />
+                        Optimal Study Times
+                      </h4>
                       <div className="space-y-3">
                         {studyPatterns.optimalTimes.map((time, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-background/60 border border-border/50">
                             <div>
-                              <span className="font-medium">{time.time}</span>
+                              <span className="font-medium text-foreground">{time.time}</span>
                               <p className="text-xs text-muted-foreground">{time.sessions} sessions</p>
                             </div>
                             <div className="text-right">
@@ -382,12 +516,15 @@ const ProgressPage = () => {
                     </div>
                     
                     <div>
-                      <h4 className="font-semibold mb-3 text-sm">Session Length Impact</h4>
+                      <h4 className="font-semibold mb-3 text-sm flex items-center">
+                        <Timer className="h-4 w-4 mr-2" />
+                        Session Length Impact
+                      </h4>
                       <div className="space-y-3">
                         {studyPatterns.sessionLengths.map((session, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-background/60 border border-border/50">
                             <div>
-                              <span className="font-medium">{session.duration}</span>
+                              <span className="font-medium text-foreground">{session.duration}</span>
                               <p className="text-xs text-muted-foreground">{session.count} sessions</p>
                             </div>
                             <div className="text-right">
