@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,8 @@ import {
   Mail,
   Globe,
   Upload,
-  AlertTriangle
+  AlertTriangle,
+  Save
 } from "lucide-react";
 
 interface PersonalInfoSettingsProps {
@@ -19,14 +21,28 @@ interface PersonalInfoSettingsProps {
 }
 
 export const PersonalInfoSettings = ({ onSave }: PersonalInfoSettingsProps) => {
+  const { profile, user, updateProfile } = useUserProfile();
   const [personalInfo, setPersonalInfo] = useState({
-    firstName: "John",
-    lastName: "Smith",
-    email: "john.smith@example.com",
+    firstName: "",
+    lastName: "",
+    email: "",
     timezone: "America/New_York",
     language: "en",
     profilePicture: ""
   });
+
+  useEffect(() => {
+    if (profile && user) {
+      setPersonalInfo({
+        firstName: profile.first_name || "",
+        lastName: profile.last_name || "",
+        email: user.email || "",
+        timezone: profile.timezone || "America/New_York",
+        language: profile.language || "en",
+        profilePicture: profile.avatar_url || ""
+      });
+    }
+  }, [profile, user]);
 
   const timezones = [
     { value: "America/New_York", label: "Eastern Time (ET)" },
@@ -49,6 +65,21 @@ export const PersonalInfoSettings = ({ onSave }: PersonalInfoSettingsProps) => {
     { value: "zh", label: "中文" },
     { value: "ja", label: "日本語" }
   ];
+
+  const handleSave = async () => {
+    const success = await updateProfile({
+      first_name: personalInfo.firstName,
+      last_name: personalInfo.lastName,
+      timezone: personalInfo.timezone,
+      language: personalInfo.language,
+      avatar_url: personalInfo.profilePicture,
+      display_name: `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+    });
+    
+    if (success) {
+      onSave();
+    }
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -222,6 +253,14 @@ export const PersonalInfoSettings = ({ onSave }: PersonalInfoSettingsProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Save Button */}
+      <div className="flex justify-end pt-4">
+        <Button onClick={handleSave} className="bg-gradient-to-r from-primary to-secondary">
+          <Save className="h-4 w-4 mr-2" />
+          Save Changes
+        </Button>
+      </div>
     </div>
   );
 };

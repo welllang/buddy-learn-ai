@@ -38,6 +38,47 @@ const Auth = () => {
   // Track which fields have been touched
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
 
+  // Auth state management
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {        
+        if (session?.user) {
+          // Check if user has completed onboarding
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('onboarding_completed')
+            .eq('user_id', session.user.id)
+            .single();
+          
+          if (profile?.onboarding_completed) {
+            navigate('/dashboard');
+          } else {
+            navigate('/onboarding');
+          }
+        }
+      }
+    );
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {      
+      if (session?.user) {
+        // Check if user has completed onboarding
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        if (profile?.onboarding_completed) {
+          navigate('/dashboard');
+        } else {
+          navigate('/onboarding');
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
   // Password strength calculation
   useEffect(() => {
     if (!isLogin && formData.password) {
@@ -181,7 +222,7 @@ const Auth = () => {
         if (data.user && !data.user.email_confirmed_at) {
           toast({
             title: "Check your email!",
-            description: "We've sent you a confirmation link to complete your registration.",
+            description: "We've sent you a confirmation link to complete your registration, then you'll be redirected to complete your setup.",
           });
         } else {
           toast({

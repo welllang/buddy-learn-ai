@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -66,12 +67,45 @@ const Onboarding = () => {
     }, 800);
   };
 
-  const handleComplete = () => {
-    toast({
-      title: "🎉 Welcome to StudyBuddy AI!",
-      description: "Your learning journey starts now. Let's make it amazing!",
-    });
-    navigate("/dashboard");
+  const handleComplete = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            goal: selectedOptions.goal,
+            learning_style: selectedOptions.learningStyle,
+            study_time: selectedOptions.studyTime,
+            onboarding_completed: true
+          })
+          .eq('user_id', user.id);
+
+        if (error) {
+          console.error('Error saving onboarding data:', error);
+          toast({
+            title: "Error saving preferences",
+            description: "Please try again or contact support.",
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+
+      toast({
+        title: "🎉 Welcome to StudyBuddy AI!",
+        description: "Your learning journey starts now. Let's make it amazing!",
+      });
+      navigate("/dashboard");
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      toast({
+        title: "Error completing setup",
+        description: "Please try again or contact support.",
+        variant: "destructive"
+      });
+    }
   };
 
   const renderStepContent = () => {

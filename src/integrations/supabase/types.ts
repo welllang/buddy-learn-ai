@@ -220,26 +220,125 @@ export type Database = {
       }
       profiles: {
         Row: {
+          adaptive_learning: boolean | null
+          auto_breaks: boolean | null
           avatar_url: string | null
+          break_length: number | null
+          calendar_integration: boolean | null
           created_at: string
+          daily_goal: number | null
+          dark_mode: boolean | null
+          data_export: boolean | null
+          difficulty_level: number | null
+          difficulty_preference: string | null
           display_name: string | null
+          feedback_type: string | null
+          first_name: string | null
+          goal: string | null
           id: string
+          language: string | null
+          last_name: string | null
+          learning_style: string | null
+          login_notifications: boolean | null
+          motivation_style: string | null
+          notifications: Json | null
+          onboarding_completed: boolean | null
+          personality_type: string | null
+          privacy_mode: boolean | null
+          progress_tracking: boolean | null
+          reminder_frequency: string | null
+          reminder_time: string | null
+          session_length: number | null
+          session_timeout: string | null
+          smart_suggestions: boolean | null
+          sound_enabled: boolean | null
+          study_methods: string[] | null
+          study_style: string | null
+          study_time: string | null
+          timezone: string | null
+          two_factor: boolean | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          adaptive_learning?: boolean | null
+          auto_breaks?: boolean | null
           avatar_url?: string | null
+          break_length?: number | null
+          calendar_integration?: boolean | null
           created_at?: string
+          daily_goal?: number | null
+          dark_mode?: boolean | null
+          data_export?: boolean | null
+          difficulty_level?: number | null
+          difficulty_preference?: string | null
           display_name?: string | null
+          feedback_type?: string | null
+          first_name?: string | null
+          goal?: string | null
           id?: string
+          language?: string | null
+          last_name?: string | null
+          learning_style?: string | null
+          login_notifications?: boolean | null
+          motivation_style?: string | null
+          notifications?: Json | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          privacy_mode?: boolean | null
+          progress_tracking?: boolean | null
+          reminder_frequency?: string | null
+          reminder_time?: string | null
+          session_length?: number | null
+          session_timeout?: string | null
+          smart_suggestions?: boolean | null
+          sound_enabled?: boolean | null
+          study_methods?: string[] | null
+          study_style?: string | null
+          study_time?: string | null
+          timezone?: string | null
+          two_factor?: boolean | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          adaptive_learning?: boolean | null
+          auto_breaks?: boolean | null
           avatar_url?: string | null
+          break_length?: number | null
+          calendar_integration?: boolean | null
           created_at?: string
+          daily_goal?: number | null
+          dark_mode?: boolean | null
+          data_export?: boolean | null
+          difficulty_level?: number | null
+          difficulty_preference?: string | null
           display_name?: string | null
+          feedback_type?: string | null
+          first_name?: string | null
+          goal?: string | null
           id?: string
+          language?: string | null
+          last_name?: string | null
+          learning_style?: string | null
+          login_notifications?: boolean | null
+          motivation_style?: string | null
+          notifications?: Json | null
+          onboarding_completed?: boolean | null
+          personality_type?: string | null
+          privacy_mode?: boolean | null
+          progress_tracking?: boolean | null
+          reminder_frequency?: string | null
+          reminder_time?: string | null
+          session_length?: number | null
+          session_timeout?: string | null
+          smart_suggestions?: boolean | null
+          sound_enabled?: boolean | null
+          study_methods?: string[] | null
+          study_style?: string | null
+          study_time?: string | null
+          timezone?: string | null
+          two_factor?: boolean | null
           updated_at?: string
           user_id?: string
         }

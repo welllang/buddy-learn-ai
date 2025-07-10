@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { PersonalInfoSettings } from "@/components/settings/PersonalInfoSettings";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,6 +51,7 @@ import {
 
 const Settings = () => {
   const { toast } = useToast();
+  const { profile, updateProfile } = useUserProfile();
   const [activeTab, setActiveTab] = useState<'personal' | 'study' | 'ai' | 'security'>('personal');
 
   // Demo data
@@ -192,191 +195,7 @@ const Settings = () => {
 
             {/* Personal Information Tab */}
             <TabsContent value="personal" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-                  {/* Profile Picture */}
-                  <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Camera className="h-5 w-5 text-primary" />
-                        Profile Picture
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex items-center gap-6">
-                        <Avatar className="h-20 w-20 border-2 border-primary/20">
-                          <AvatarImage src={personalInfo.profilePicture} />
-                          <AvatarFallback className="text-lg bg-gradient-to-br from-primary to-secondary text-white">
-                            {personalInfo.firstName[0]}{personalInfo.lastName[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-2">
-                          <p className="text-sm text-muted-foreground">
-                            Upload a profile picture to personalize your account
-                          </p>
-                          <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="gap-2" asChild>
-                              <label htmlFor="profile-upload" className="cursor-pointer">
-                                <Upload className="h-4 w-4" />
-                                Upload Photo
-                              </label>
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => setPersonalInfo(prev => ({ ...prev, profilePicture: "" }))}
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                          <input 
-                            id="profile-upload"
-                            type="file" 
-                            accept="image/*" 
-                            className="hidden" 
-                            onChange={handleFileUpload}
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Personal Information */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <User className="h-5 w-5" />
-                        Personal Information
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="firstName">First Name</Label>
-                          <Input
-                            id="firstName"
-                            value={personalInfo.firstName}
-                            onChange={(e) => setPersonalInfo(prev => ({ ...prev, firstName: e.target.value }))}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="lastName">Last Name</Label>
-                          <Input
-                            id="lastName"
-                            value={personalInfo.lastName}
-                            onChange={(e) => setPersonalInfo(prev => ({ ...prev, lastName: e.target.value }))}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="flex items-center gap-2">
-                          <Mail className="h-4 w-4" />
-                          Email Address
-                        </Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={personalInfo.email}
-                          onChange={(e) => setPersonalInfo(prev => ({ ...prev, email: e.target.value }))}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Used for account notifications and study reminders
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Localization */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Globe className="h-5 w-5" />
-                        Localization
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="timezone">Timezone</Label>
-                        <Select value={personalInfo.timezone} onValueChange={(value) => setPersonalInfo(prev => ({ ...prev, timezone: value }))}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select timezone" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-background border border-border shadow-lg z-50">
-                            {timezones.map((timezone) => (
-                              <SelectItem key={timezone.value} value={timezone.value}>
-                                {timezone.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="language">Language</Label>
-                        <Select value={personalInfo.language} onValueChange={(value) => setPersonalInfo(prev => ({ ...prev, language: value }))}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select language" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-background border border-border shadow-lg z-50">
-                            {languages.map((language) => (
-                              <SelectItem key={language.value} value={language.value}>
-                                {language.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Sidebar */}
-                <div className="space-y-6">
-                  <Card className="bg-gradient-to-br from-accent/10 to-accent/5 border-accent/20">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <Zap className="h-5 w-5 text-accent" />
-                        Account Status
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Plan</span>
-                        <Badge className="bg-gradient-to-r from-primary to-secondary text-white">Pro</Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Level</span>
-                        <span className="font-bold">15</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Study Streak</span>
-                        <span className="font-bold text-success">27 days</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-destructive/20">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2 text-destructive">
-                        <AlertTriangle className="h-5 w-5" />
-                        Danger Zone
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="bg-destructive/10 rounded-lg p-4 space-y-3">
-                        <h4 className="font-medium text-sm">Delete Account</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Permanently delete your account and all associated data. This action cannot be undone.
-                        </p>
-                        <Button variant="destructive" size="sm">
-                          Delete Account
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
+              <PersonalInfoSettings onSave={handleSaveSettings} />
             </TabsContent>
 
             {/* Study Preferences Tab */}
