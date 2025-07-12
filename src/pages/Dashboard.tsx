@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import AIAssistant from "@/components/AIAssistant";
 import { 
   BookOpen, 
   Target, 
@@ -52,7 +50,6 @@ import {
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   
   // Enhanced Demo Data with more creativity
   const currentUser = {
@@ -164,7 +161,7 @@ const Dashboard = () => {
   const handleQuickAction = (action: string) => {
     switch (action) {
       case "ai":
-        setIsAIAssistantOpen(true);
+        // AI Assistant is now handled globally
         break;
       case "study":
         // Navigate to study session
@@ -188,14 +185,6 @@ const Dashboard = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-background">
-        {/* Floating Chat Button */}
-        <Button
-          onClick={() => setIsAIAssistantOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-2xl z-40 flex items-center justify-center"
-          size="lg"
-        >
-          <MessageSquare className="h-6 w-6 text-white" />
-        </Button>
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
@@ -577,7 +566,6 @@ const Dashboard = () => {
                     variant="outline" 
                     size="sm" 
                     className="w-full"
-                    onClick={() => setIsAIAssistantOpen(true)}
                   >
                     Chat with AI
                     <ChevronRight className="h-3 w-3 ml-1" />
@@ -589,12 +577,6 @@ const Dashboard = () => {
         </div>
         </div>
 
-        {/* AI Assistant */}
-        <AIAssistant 
-          isOpen={isAIAssistantOpen}
-          onClose={() => setIsAIAssistantOpen(false)}
-          context="Dashboard - Current study session and progress overview"
-        />
       </div>
     </>
   );
