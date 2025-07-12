@@ -47,17 +47,21 @@ interface AIAssistantProps {
   context?: string;
 }
 
+type ChatSize = 'normal' | 'maximized' | 'fullscreen';
+
 const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: "Hi there! 👋 I'm your StudyBuddy AI assistant. I'm here to help you study smarter, answer questions, provide study tips, and keep you motivated. What would you like to work on today?",
-      timestamp: new Date().toISOString()
-    }
-  ]);
+  // Create initial message once to prevent re-renders
+  const [initialMessage] = useState<Message>({
+    id: '1',
+    role: 'assistant',
+    content: "Hi there! 👋 I'm your StudyBuddy AI assistant. I'm here to help you study smarter, answer questions, provide study tips, and keep you motivated. What would you like to work on today?",
+    timestamp: new Date().toISOString()
+  });
+  
+  const [messages, setMessages] = useState<Message[]>([initialMessage]);
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [chatSize, setChatSize] = useState<ChatSize>('normal');
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -476,11 +480,50 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
     </div>
   );
 
+  // Handle close click
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  // Handle size changes
+  const handleSizeChange = (newSize: ChatSize) => {
+    setChatSize(newSize);
+  };
+
+  // Get container classes based on size
+  const getContainerClasses = () => {
+    switch (chatSize) {
+      case 'fullscreen':
+        return "fixed inset-0 z-50";
+      case 'maximized':
+        return "fixed inset-4 z-50";
+      default:
+        return "fixed inset-0 bg-black/50 flex items-end justify-end p-4 z-50";
+    }
+  };
+
+  // Get card classes based on size
+  const getCardClasses = () => {
+    switch (chatSize) {
+      case 'fullscreen':
+        return "w-full h-full flex flex-col shadow-2xl border-primary/20 rounded-none";
+      case 'maximized':
+        return "w-full h-full flex flex-col shadow-2xl border-primary/20 rounded-lg";
+      default:
+        return "w-96 h-[600px] flex flex-col shadow-2xl border-primary/20";
+    }
+  };
+
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-end justify-end p-4 z-50">
-      <Card className="w-96 h-[600px] flex flex-col shadow-2xl border-primary/20">
+    <div className={getContainerClasses()}>
+      {chatSize === 'normal' && <div className="absolute inset-0 bg-black/50" onClick={handleClose} />}
+      <Card className={getCardClasses()}>
         {/* Header */}
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-r from-primary/10 to-secondary/10">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-r from-primary/10 to-secondary/10 flex-shrink-0">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Brain className="h-4 w-4 text-white" />
@@ -491,10 +534,50 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
             </div>
           </div>
           <div className="flex items-center space-x-1">
-            <Button variant="ghost" size="sm">
-              <Minimize2 className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            {chatSize === 'fullscreen' ? (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleSizeChange('maximized')}
+                title="Exit Fullscreen"
+              >
+                <Minimize2 className="h-4 w-4" />
+              </Button>
+            ) : chatSize === 'maximized' ? (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleSizeChange('fullscreen')}
+                  title="Fullscreen"
+                >
+                  <Expand className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleSizeChange('normal')}
+                  title="Minimize"
+                >
+                  <Minimize2 className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleSizeChange('maximized')}
+                title="Maximize"
+              >
+                <Expand className="h-4 w-4" />
+              </Button>
+            )}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleClose}
+              title="Close"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -612,7 +695,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
 
         {/* Input */}
         <Separator />
-        <div className="p-4">
+        <div className="p-4 flex-shrink-0">
           <div className="flex space-x-2">
             <Input
               placeholder="Ask me anything..."
@@ -630,9 +713,23 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
               <Send className="h-4 w-4" />
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            Press Enter to send • AI responses may take a moment
-          </p>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-xs text-muted-foreground">
+              Press Enter to send • AI responses may take a moment
+            </p>
+            {chatSize === 'normal' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleSizeChange('fullscreen')}
+                className="text-xs h-6 px-2"
+                title="Focus Mode (Fullscreen)"
+              >
+                <Sparkles className="h-3 w-3 mr-1" />
+                Focus
+              </Button>
+            )}
+          </div>
         </div>
       </Card>
     </div>
