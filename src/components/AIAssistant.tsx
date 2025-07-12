@@ -497,11 +497,11 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
   const getContainerClasses = () => {
     switch (chatSize) {
       case 'fullscreen':
-        return "fixed inset-0 z-50";
+        return "fixed inset-0 z-[100] bg-background";
       case 'maximized':
-        return "fixed inset-4 z-50";
+        return "fixed inset-4 z-[100] bg-background/95 backdrop-blur-sm";
       default:
-        return "fixed inset-0 bg-black/50 flex items-end justify-end p-4 z-50";
+        return "fixed bottom-4 right-4 z-[60] max-w-sm w-96";
     }
   };
 
@@ -509,25 +509,28 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
   const getCardClasses = () => {
     switch (chatSize) {
       case 'fullscreen':
-        return "w-full h-full flex flex-col shadow-2xl border-primary/20 rounded-none";
+        return "w-full h-full flex flex-col shadow-2xl border-primary/20 rounded-none bg-background";
       case 'maximized':
-        return "w-full h-full flex flex-col shadow-2xl border-primary/20 rounded-lg";
+        return "w-full h-full flex flex-col shadow-2xl border-primary/20 rounded-lg bg-background";
       default:
-        return "w-96 h-[600px] flex flex-col shadow-2xl border-primary/20";
+        return "w-full h-[600px] flex flex-col shadow-2xl border-primary/20 bg-background";
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className={getContainerClasses()}>
-      {chatSize === 'normal' && (
+    <>
+      {/* Background overlay only for fullscreen/maximized modes */}
+      {(chatSize === 'fullscreen' || chatSize === 'maximized') && (
         <div 
-          className="absolute inset-0 bg-black/50" 
+          className="fixed inset-0 bg-black/50 z-[95]" 
           onClick={handleClose}
         />
       )}
-      <Card className={getCardClasses()}>
+      
+      <div className={getContainerClasses()}>
+        <Card className={getCardClasses()}>
         {/* Header */}
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-r from-primary/10 to-secondary/10 flex-shrink-0">
           <div className="flex items-center space-x-2">
@@ -748,6 +751,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
         </div>
       </Card>
     </div>
+    </>
   );
 };
 
