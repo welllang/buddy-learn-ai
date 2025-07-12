@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,6 +46,15 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, loading]);
 
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -143,16 +152,16 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
         </CardHeader>
 
         {/* Messages */}
-        <CardContent className="flex-1 p-0">
-          <ScrollArea className="h-full p-4">
-            <div className="space-y-4">
+        <CardContent className="flex-1 p-0 overflow-hidden">
+          <ScrollArea ref={scrollAreaRef} className="h-full">
+            <div className="p-4 space-y-4">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`flex max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-2`}>
-                    <Avatar className="w-6 h-6">
+                    <Avatar className="w-6 h-6 flex-shrink-0">
                       {message.role === 'user' ? (
                         <div className="w-full h-full bg-primary/10 flex items-center justify-center">
                           <span className="text-xs font-medium text-primary">U</span>
@@ -164,7 +173,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                       )}
                     </Avatar>
                     <div
-                      className={`rounded-lg px-3 py-2 text-sm ${
+                      className={`rounded-lg px-3 py-2 text-sm break-words ${
                         message.role === 'user'
                           ? 'bg-primary text-white ml-2'
                           : 'bg-muted mr-2'
@@ -179,7 +188,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
               {loading && (
                 <div className="flex justify-start">
                   <div className="flex items-start space-x-2">
-                    <Avatar className="w-6 h-6">
+                    <Avatar className="w-6 h-6 flex-shrink-0">
                       <div className="w-full h-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
                         <Brain className="h-3 w-3 text-white" />
                       </div>
@@ -194,6 +203,9 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                   </div>
                 </div>
               )}
+              
+              {/* Invisible element to scroll to */}
+              <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
         </CardContent>
