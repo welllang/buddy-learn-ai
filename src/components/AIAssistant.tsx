@@ -62,28 +62,22 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
     setLoading(true);
 
     try {
-      const response = await fetch('/functions/v1/ai-assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('ai-assistant', {
+        body: {
           message: inputMessage,
           context: context
-        }),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to get AI response');
+      if (error) {
+        throw new Error(error.message || 'Failed to get AI response');
       }
 
-      const data = await response.json();
-      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
-        timestamp: data.timestamp
+        timestamp: data.timestamp || new Date().toISOString()
       };
 
       setMessages(prev => [...prev, aiMessage]);
