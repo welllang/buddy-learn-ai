@@ -188,6 +188,15 @@ const Dashboard = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-background">
+        {/* Floating Chat Button */}
+        <Button
+          onClick={() => setIsAIAssistantOpen(true)}
+          className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-2xl z-40 flex items-center justify-center"
+          size="lg"
+        >
+          <MessageSquare className="h-6 w-6 text-white" />
+        </Button>
+
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
         {/* Header */}
