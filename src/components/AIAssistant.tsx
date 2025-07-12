@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ReactMarkdown from 'react-markdown';
 import mermaid from 'mermaid';
 import { 
@@ -18,7 +19,9 @@ import {
   Clock,
   Sparkles,
   X,
-  Minimize2
+  Minimize2,
+  Expand,
+  ZoomIn
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -166,6 +169,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
   const MermaidRenderer = ({ code }: { code: string }) => {
     const [svg, setSvg] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     useEffect(() => {
       const renderMermaid = async () => {
@@ -185,11 +189,64 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
       return <div className="text-destructive text-sm">{error}</div>;
     }
 
+    if (!svg) {
+      return <div className="text-muted-foreground text-sm">Loading diagram...</div>;
+    }
+
     return (
-      <div 
-        className="mermaid-container my-3 p-3 bg-muted/30 rounded-lg border overflow-x-auto"
-        dangerouslySetInnerHTML={{ __html: svg }}
-      />
+      <div className="my-3">
+        {/* Small responsive version in chat */}
+        <div className="relative group">
+          <div 
+            className="mermaid-container p-3 bg-muted/30 rounded-lg border overflow-hidden cursor-pointer hover:bg-muted/40 transition-colors"
+            style={{ maxHeight: '200px' }}
+          >
+            <div 
+              className="overflow-hidden"
+              style={{ 
+                transform: 'scale(0.6)', 
+                transformOrigin: 'top left',
+                width: '166.67%', // Compensate for scale
+                height: '166.67%'
+              }}
+              dangerouslySetInnerHTML={{ __html: svg }}
+            />
+          </div>
+          
+          {/* Expand button overlay */}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Expand className="h-3 w-3 mr-1" />
+                View Full Size
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <ZoomIn className="h-4 w-4" />
+                  Diagram - Full View
+                </DialogTitle>
+              </DialogHeader>
+              <div className="mt-4">
+                <div 
+                  className="mermaid-container p-4 bg-muted/10 rounded-lg border overflow-auto"
+                  dangerouslySetInnerHTML={{ __html: svg }}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+        
+        <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+          <Expand className="h-3 w-3" />
+          Click to view in full size
+        </p>
+      </div>
     );
   };
 
