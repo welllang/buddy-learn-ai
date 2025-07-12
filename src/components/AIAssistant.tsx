@@ -592,17 +592,19 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
         {/* Messages */}
         <CardContent className="flex-1 p-0 overflow-hidden">
           <ScrollArea ref={scrollAreaRef} className="h-full">
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-4 select-none">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onMouseUp={(e) => e.stopPropagation()}
                 >
                   <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-2`}>
                     <Avatar className="w-6 h-6 flex-shrink-0">
                       {message.role === 'user' ? (
                         <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-xs font-medium text-primary">U</span>
+                          <span className="text-xs font-medium text-primary select-none">U</span>
                         </div>
                       ) : (
                         <div className="w-full h-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
@@ -611,11 +613,13 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                       )}
                     </Avatar>
                     <div
-                      className={`rounded-lg px-3 py-2 text-sm max-w-full overflow-hidden ${
+                      className={`rounded-lg px-3 py-2 text-sm max-w-full overflow-hidden select-text cursor-auto ${
                         message.role === 'user'
                           ? 'bg-primary text-white ml-2'
                           : 'bg-muted mr-2'
                       }`}
+                      onClick={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
                     >
                       {message.role === 'assistant' ? (
                         <div className="space-y-3 max-w-full">
@@ -631,8 +635,11 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                                     key={idx}
                                     variant="ghost"
                                     size="sm"
-                                    className="h-auto p-2 text-xs text-left justify-start hover:bg-muted/50 w-full break-words whitespace-normal"
-                                    onClick={() => handleRelatedQuestionClick(question)}
+                                    className="h-auto p-2 text-xs text-left justify-start hover:bg-muted/50 w-full break-words whitespace-normal select-none"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleRelatedQuestionClick(question);
+                                    }}
                                   >
                                     <span className="text-primary mr-1 flex-shrink-0">🤔</span>
                                     <span className="break-words">{question}</span>
@@ -643,7 +650,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                           )}
                         </div>
                       ) : (
-                        <span className="break-words">{message.content}</span>
+                        <span className="break-words select-text">{message.content}</span>
                       )}
                     </div>
                   </div>
