@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReactMarkdown from 'react-markdown';
 import mermaid from 'mermaid';
 import { 
@@ -21,7 +22,13 @@ import {
   X,
   Minimize2,
   Expand,
-  ZoomIn
+  ZoomIn,
+  Table,
+  BarChart3,
+  List,
+  Grid,
+  Star,
+  CheckCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -257,7 +264,217 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
     { icon: Clock, text: "Time management", action: "How can I manage my study time better?" },
   ];
 
-  if (!isOpen) return null;
+  // Enhanced content renderer with visual powers
+  const EnhancedContentRenderer = ({ content }: { content: string }) => {
+    const [processedContent, setProcessedContent] = useState<any>(null);
+
+    useEffect(() => {
+      const processContent = () => {
+        // Parse and enhance the content
+        const sections = parseContentSections(content);
+        setProcessedContent(sections);
+      };
+      processContent();
+    }, [content]);
+
+    if (!processedContent) {
+      return <div className="text-muted-foreground text-sm">Processing content...</div>;
+    }
+
+    return (
+      <div className="space-y-4 max-w-full overflow-hidden">
+        {processedContent.map((section: any, index: number) => (
+          <div key={index}>
+            {section.type === 'text' && (
+              <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted-foreground/10 prose-pre:text-foreground break-words">
+                <ReactMarkdown
+                  components={{
+                    h1: ({ children }) => <h1 className="text-base font-bold mb-2 text-foreground break-words">{children}</h1>,
+                    h2: ({ children }) => <h2 className="text-sm font-semibold mb-1 text-foreground break-words">{children}</h2>,
+                    h3: ({ children }) => <h3 className="text-sm font-medium mb-1 text-foreground break-words">{children}</h3>,
+                    p: ({ children }) => <p className="mb-2 text-foreground leading-relaxed break-words">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+                    li: ({ children }) => <li className="text-foreground break-words">{children}</li>,
+                    code: ({ children, className }) => {
+                      if (className === 'language-mermaid') {
+                        return <MermaidRenderer code={String(children)} />;
+                      }
+                      return <code className="bg-muted-foreground/10 px-1 py-0.5 rounded text-xs font-mono text-foreground break-all">{children}</code>;
+                    },
+                    pre: ({ children }) => <pre className="bg-muted-foreground/10 p-2 rounded text-xs overflow-x-auto whitespace-pre-wrap break-words">{children}</pre>,
+                    blockquote: ({ children }) => <blockquote className="border-l-2 border-primary pl-3 italic text-foreground/80 break-words">{children}</blockquote>,
+                    strong: ({ children }) => <strong className="font-semibold text-foreground break-words">{children}</strong>,
+                    table: () => null, // We'll handle tables separately
+                  }}
+                >
+                  {section.content}
+                </ReactMarkdown>
+              </div>
+            )}
+            
+            {section.type === 'table' && (
+              <EnhancedTable data={section.data} />
+            )}
+            
+            {section.type === 'apps' && (
+              <AppRecommendationCards apps={section.apps} />
+            )}
+            
+            {section.type === 'list' && (
+              <EnhancedList items={section.items} listType={section.listType} />
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Parse content into different visual sections
+  const parseContentSections = (content: string) => {
+    const sections = [];
+    let currentContent = content;
+
+    // Extract and parse tables
+    const tableRegex = /\|([^|]+\|)+/gm;
+    const tableMatches = currentContent.match(tableRegex);
+    
+    if (tableMatches && tableMatches.length > 2) {
+      const tableData = parseTableData(tableMatches);
+      if (tableData) {
+        sections.push({ type: 'table', data: tableData });
+        currentContent = currentContent.replace(tableRegex, '').trim();
+      }
+    }
+
+    // Extract app recommendations (detect patterns like "AppName | Features | Platform")
+    const appPattern = /(?:📱|🔗|⚡)\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)/g;
+    const appMatches = [];
+    let match;
+    while ((match = appPattern.exec(content)) !== null) {
+      appMatches.push({
+        name: match[1].trim(),
+        features: match[2].trim(),
+        platform: match[3].trim()
+      });
+    }
+    
+    if (appMatches.length > 0) {
+      sections.push({ type: 'apps', apps: appMatches });
+      currentContent = currentContent.replace(appPattern, '').trim();
+    }
+
+    // Extract lists
+    const listPattern = /(?:^\s*[-*+•]\s+.+$)/gm;
+    const listMatches = currentContent.match(listPattern);
+    if (listMatches && listMatches.length > 2) {
+      sections.push({ 
+        type: 'list', 
+        items: listMatches.map(item => item.replace(/^\s*[-*+•]\s+/, '').trim()),
+        listType: 'bullet'
+      });
+      currentContent = currentContent.replace(listPattern, '').trim();
+    }
+
+    // Add remaining content as text
+    if (currentContent.trim()) {
+      sections.push({ type: 'text', content: currentContent });
+    }
+
+    return sections.length > 0 ? sections : [{ type: 'text', content: content }];
+  };
+
+  // Parse table data from markdown
+  const parseTableData = (tableLines: string[]) => {
+    if (tableLines.length < 2) return null;
+    
+    const headers = tableLines[0].split('|').map(h => h.trim()).filter(h => h);
+    const rows = tableLines.slice(2).map(row => 
+      row.split('|').map(cell => cell.trim()).filter(cell => cell)
+    );
+    
+    return { headers, rows };
+  };
+
+  // Enhanced table component
+  const EnhancedTable = ({ data }: { data: any }) => (
+    <div className="my-4">
+      <div className="flex items-center gap-2 mb-2">
+        <Table className="h-4 w-4 text-primary" />
+        <span className="text-sm font-medium text-foreground">Data Table</span>
+      </div>
+      <div className="overflow-x-auto border rounded-lg bg-muted/30">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/60">
+            <tr>
+              {data.headers.map((header: string, idx: number) => (
+                <th key={idx} className="px-3 py-2 text-left font-medium text-foreground border-b">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.rows.map((row: string[], idx: number) => (
+              <tr key={idx} className="border-b last:border-b-0 hover:bg-muted/20">
+                {row.map((cell: string, cellIdx: number) => (
+                  <td key={cellIdx} className="px-3 py-2 text-foreground break-words">
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  // App recommendation cards
+  const AppRecommendationCards = ({ apps }: { apps: any[] }) => (
+    <div className="my-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Grid className="h-4 w-4 text-primary" />
+        <span className="text-sm font-medium text-foreground">Recommended Apps</span>
+      </div>
+      <div className="grid gap-3">
+        {apps.map((app, idx) => (
+          <Card key={idx} className="p-3 bg-gradient-to-r from-primary/5 to-secondary/5 border-l-2 border-l-primary">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Star className="h-4 w-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-foreground break-words">{app.name}</h4>
+                <p className="text-sm text-muted-foreground mt-1 break-words">{app.features}</p>
+                <Badge variant="secondary" className="mt-2 text-xs">
+                  {app.platform}
+                </Badge>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Enhanced list component
+  const EnhancedList = ({ items, listType }: { items: string[], listType: string }) => (
+    <div className="my-4">
+      <div className="flex items-center gap-2 mb-2">
+        <List className="h-4 w-4 text-primary" />
+        <span className="text-sm font-medium text-foreground">Key Points</span>
+      </div>
+      <div className="space-y-2">
+        {items.map((item, idx) => (
+          <div key={idx} className="flex items-start gap-3 p-2 rounded-lg bg-muted/20">
+            <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+            <span className="text-sm text-foreground break-words">{item}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-end justify-end p-4 z-50">
@@ -292,7 +509,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                   key={message.id}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-2`}>
+                  <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-2`}>
                     <Avatar className="w-6 h-6 flex-shrink-0">
                       {message.role === 'user' ? (
                         <div className="w-full h-full bg-primary/10 flex items-center justify-center">
@@ -305,43 +522,15 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                       )}
                     </Avatar>
                     <div
-                      className={`rounded-lg px-3 py-2 text-sm break-words ${
+                      className={`rounded-lg px-3 py-2 text-sm max-w-full overflow-hidden ${
                         message.role === 'user'
                           ? 'bg-primary text-white ml-2'
                           : 'bg-muted mr-2'
                       }`}
                     >
                       {message.role === 'assistant' ? (
-                        <div className="space-y-3">
-                          <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted-foreground/10 prose-pre:text-foreground">
-                            <ReactMarkdown
-                              components={{
-                                // Custom styling for different elements
-                                h1: ({ children }) => <h1 className="text-base font-bold mb-2 text-foreground">{children}</h1>,
-                                h2: ({ children }) => <h2 className="text-sm font-semibold mb-1 text-foreground">{children}</h2>,
-                                h3: ({ children }) => <h3 className="text-sm font-medium mb-1 text-foreground">{children}</h3>,
-                                p: ({ children }) => <p className="mb-2 text-foreground leading-relaxed">{children}</p>,
-                                ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
-                                ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
-                                li: ({ children }) => <li className="text-foreground">{children}</li>,
-                                code: ({ children, className }) => {
-                                  // Handle mermaid code blocks
-                                  if (className === 'language-mermaid') {
-                                    return <MermaidRenderer code={String(children)} />;
-                                  }
-                                  return <code className="bg-muted-foreground/10 px-1 py-0.5 rounded text-xs font-mono text-foreground">{children}</code>;
-                                },
-                                pre: ({ children }) => <pre className="bg-muted-foreground/10 p-2 rounded text-xs overflow-x-auto">{children}</pre>,
-                                blockquote: ({ children }) => <blockquote className="border-l-2 border-primary pl-3 italic text-foreground/80">{children}</blockquote>,
-                                strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
-                                table: ({ children }) => <table className="w-full border-collapse text-xs mb-2">{children}</table>,
-                                th: ({ children }) => <th className="border border-border p-1 bg-muted font-medium text-left">{children}</th>,
-                                td: ({ children }) => <td className="border border-border p-1">{children}</td>,
-                              }}
-                            >
-                              {message.content.replace(/(?:Related Questions?:|🤔.*?)\s*((?:🤔.*?(?:\n|$))+)/gi, '')}
-                            </ReactMarkdown>
-                          </div>
+                        <div className="space-y-3 max-w-full">
+                          <EnhancedContentRenderer content={message.content.replace(/(?:Related Questions?:|🤔.*?)\s*((?:🤔.*?(?:\n|$))+)/gi, '')} />
                           
                           {/* Related Questions */}
                           {message.relatedQuestions && message.relatedQuestions.length > 0 && (
@@ -353,11 +542,11 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                                     key={idx}
                                     variant="ghost"
                                     size="sm"
-                                    className="h-auto p-2 text-xs text-left justify-start hover:bg-muted/50 w-full"
+                                    className="h-auto p-2 text-xs text-left justify-start hover:bg-muted/50 w-full break-words whitespace-normal"
                                     onClick={() => handleRelatedQuestionClick(question)}
                                   >
-                                    <span className="text-primary mr-1">🤔</span>
-                                    {question}
+                                    <span className="text-primary mr-1 flex-shrink-0">🤔</span>
+                                    <span className="break-words">{question}</span>
                                   </Button>
                                 ))}
                               </div>
@@ -365,7 +554,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                           )}
                         </div>
                       ) : (
-                        message.content
+                        <span className="break-words">{message.content}</span>
                       )}
                     </div>
                   </div>

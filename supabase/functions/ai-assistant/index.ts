@@ -36,8 +36,16 @@ IMPORTANT FORMATTING INSTRUCTIONS:
 - Use code blocks for examples or formulas
 - Add emoji icons for different sections (📚 for study tips, 🎯 for goals, ⚡ for quick tips, etc.)
 - Keep responses concise but well-structured
-- Use tables when comparing information
 - Use blockquotes for important quotes or key points
+
+VISUAL DATA PRESENTATION:
+- For app/tool recommendations, format as: "📱 AppName | Key features | Platform"
+- For structured data comparisons, always use proper markdown tables
+- For lists with 3+ items, use bullet points with icons
+- Example table format:
+  | App Name | Key Features | Platform |
+  |----------|-------------|----------|
+  | Todoist | Task management, projects, deadlines | iOS, Android, Web |
 
 VISUAL DIAGRAMS (use when helpful):
 - For processes, workflows, or step-by-step concepts, include a Mermaid flowchart using \`\`\`mermaid syntax
@@ -67,7 +75,7 @@ ${context ? `Additional context: ${context}` : ''}`;
           { role: 'user', content: message }
         ],
         temperature: 0.8,
-        max_tokens: 500,
+        max_tokens: 800,
       }),
     });
 
