@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import ReactMarkdown from 'react-markdown';
 import { 
   MessageSquare, 
   Send, 
@@ -179,7 +180,33 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                           : 'bg-muted mr-2'
                       }`}
                     >
-                      {message.content}
+                      {message.role === 'assistant' ? (
+                        <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted-foreground/10 prose-pre:text-foreground">
+                          <ReactMarkdown
+                            components={{
+                              // Custom styling for different elements
+                              h1: ({ children }) => <h1 className="text-base font-bold mb-2 text-foreground">{children}</h1>,
+                              h2: ({ children }) => <h2 className="text-sm font-semibold mb-1 text-foreground">{children}</h2>,
+                              h3: ({ children }) => <h3 className="text-sm font-medium mb-1 text-foreground">{children}</h3>,
+                              p: ({ children }) => <p className="mb-2 text-foreground leading-relaxed">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+                              li: ({ children }) => <li className="text-foreground">{children}</li>,
+                              code: ({ children }) => <code className="bg-muted-foreground/10 px-1 py-0.5 rounded text-xs font-mono text-foreground">{children}</code>,
+                              pre: ({ children }) => <pre className="bg-muted-foreground/10 p-2 rounded text-xs overflow-x-auto">{children}</pre>,
+                              blockquote: ({ children }) => <blockquote className="border-l-2 border-primary pl-3 italic text-foreground/80">{children}</blockquote>,
+                              strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                              table: ({ children }) => <table className="w-full border-collapse text-xs mb-2">{children}</table>,
+                              th: ({ children }) => <th className="border border-border p-1 bg-muted font-medium text-left">{children}</th>,
+                              td: ({ children }) => <td className="border border-border p-1">{children}</td>,
+                            }}
+                          >
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
+                      ) : (
+                        message.content
+                      )}
                     </div>
                   </div>
                 </div>
