@@ -173,6 +173,7 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      e.stopPropagation();
       sendMessage();
     }
   };
@@ -520,7 +521,12 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
 
   return (
     <div className={getContainerClasses()}>
-      {chatSize === 'normal' && <div className="absolute inset-0 bg-black/50" onClick={handleClose} />}
+      {chatSize === 'normal' && (
+        <div 
+          className="absolute inset-0 bg-black/50" 
+          onClick={handleClose}
+        />
+      )}
       <Card className={getCardClasses()}>
         {/* Header */}
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-r from-primary/10 to-secondary/10 flex-shrink-0">
@@ -701,9 +707,11 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
               placeholder="Ask me anything..."
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               disabled={loading}
               className="flex-1"
+              onClick={(e) => e.stopPropagation()}
+              onFocus={(e) => e.stopPropagation()}
             />
             <Button 
               onClick={sendMessage} 
