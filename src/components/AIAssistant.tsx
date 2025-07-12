@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import ReactMarkdown from 'react-markdown';
+import mermaid from 'mermaid';
 import { 
   MessageSquare, 
   Send, 
@@ -27,6 +28,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  relatedQuestions?: string[];
 }
 
 interface AIAssistantProps {
@@ -49,6 +51,29 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Initialize Mermaid
+  useEffect(() => {
+    mermaid.initialize({ 
+      startOnLoad: true, 
+      theme: 'base',
+      themeVariables: {
+        primaryColor: 'hsl(var(--primary))',
+        primaryTextColor: 'hsl(var(--primary-foreground))',
+        primaryBorderColor: 'hsl(var(--primary))',
+        lineColor: 'hsl(var(--border))',
+        sectionBkgColor: 'hsl(var(--muted))',
+        altSectionBkgColor: 'hsl(var(--background))',
+        gridColor: 'hsl(var(--border))',
+        textColor: 'hsl(var(--foreground))',
+        taskBkgColor: 'hsl(var(--muted))',
+        taskTextColor: 'hsl(var(--foreground))',
+        activeTaskBkgColor: 'hsl(var(--primary))',
+        activeTaskBorderColor: 'hsl(var(--primary))',
+        fontFamily: 'Inter, system-ui, sans-serif'
+      }
+    });
+  }, []);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -83,11 +108,15 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
         throw new Error(error.message || 'Failed to get AI response');
       }
 
+      // Extract related questions from the response
+      const relatedQuestions = extractRelatedQuestions(data.response);
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
-        timestamp: data.timestamp || new Date().toISOString()
+        timestamp: data.timestamp || new Date().toISOString(),
+        relatedQuestions
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -112,11 +141,56 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
     }
   };
 
+  const extractRelatedQuestions = (content: string): string[] => {
+    const relatedSection = content.match(/(?:Related Questions?:|🤔.*?)\s*((?:🤔.*?(?:\n|$))+)/i);
+    if (relatedSection) {
+      return relatedSection[1]
+        .split('\n')
+        .map(q => q.replace(/^🤔\s*/, '').trim())
+        .filter(q => q.length > 0);
+    }
+    return [];
+  };
+
+  const handleRelatedQuestionClick = (question: string) => {
+    setInputMessage(question);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
+  };
+
+  const MermaidRenderer = ({ code }: { code: string }) => {
+    const [svg, setSvg] = useState<string>('');
+    const [error, setError] = useState<string>('');
+
+    useEffect(() => {
+      const renderMermaid = async () => {
+        try {
+          const { svg } = await mermaid.render(`mermaid-${Date.now()}`, code);
+          setSvg(svg);
+          setError('');
+        } catch (err) {
+          setError('Failed to render diagram');
+          console.error('Mermaid render error:', err);
+        }
+      };
+      renderMermaid();
+    }, [code]);
+
+    if (error) {
+      return <div className="text-destructive text-sm">{error}</div>;
+    }
+
+    return (
+      <div 
+        className="mermaid-container my-3 p-3 bg-muted/30 rounded-lg border overflow-x-auto"
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+    );
   };
 
   const quickActions = [
@@ -181,28 +255,57 @@ const AIAssistant = ({ isOpen, onClose, context }: AIAssistantProps) => {
                       }`}
                     >
                       {message.role === 'assistant' ? (
-                        <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted-foreground/10 prose-pre:text-foreground">
-                          <ReactMarkdown
-                            components={{
-                              // Custom styling for different elements
-                              h1: ({ children }) => <h1 className="text-base font-bold mb-2 text-foreground">{children}</h1>,
-                              h2: ({ children }) => <h2 className="text-sm font-semibold mb-1 text-foreground">{children}</h2>,
-                              h3: ({ children }) => <h3 className="text-sm font-medium mb-1 text-foreground">{children}</h3>,
-                              p: ({ children }) => <p className="mb-2 text-foreground leading-relaxed">{children}</p>,
-                              ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
-                              ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
-                              li: ({ children }) => <li className="text-foreground">{children}</li>,
-                              code: ({ children }) => <code className="bg-muted-foreground/10 px-1 py-0.5 rounded text-xs font-mono text-foreground">{children}</code>,
-                              pre: ({ children }) => <pre className="bg-muted-foreground/10 p-2 rounded text-xs overflow-x-auto">{children}</pre>,
-                              blockquote: ({ children }) => <blockquote className="border-l-2 border-primary pl-3 italic text-foreground/80">{children}</blockquote>,
-                              strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
-                              table: ({ children }) => <table className="w-full border-collapse text-xs mb-2">{children}</table>,
-                              th: ({ children }) => <th className="border border-border p-1 bg-muted font-medium text-left">{children}</th>,
-                              td: ({ children }) => <td className="border border-border p-1">{children}</td>,
-                            }}
-                          >
-                            {message.content}
-                          </ReactMarkdown>
+                        <div className="space-y-3">
+                          <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted-foreground/10 prose-pre:text-foreground">
+                            <ReactMarkdown
+                              components={{
+                                // Custom styling for different elements
+                                h1: ({ children }) => <h1 className="text-base font-bold mb-2 text-foreground">{children}</h1>,
+                                h2: ({ children }) => <h2 className="text-sm font-semibold mb-1 text-foreground">{children}</h2>,
+                                h3: ({ children }) => <h3 className="text-sm font-medium mb-1 text-foreground">{children}</h3>,
+                                p: ({ children }) => <p className="mb-2 text-foreground leading-relaxed">{children}</p>,
+                                ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+                                ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+                                li: ({ children }) => <li className="text-foreground">{children}</li>,
+                                code: ({ children, className }) => {
+                                  // Handle mermaid code blocks
+                                  if (className === 'language-mermaid') {
+                                    return <MermaidRenderer code={String(children)} />;
+                                  }
+                                  return <code className="bg-muted-foreground/10 px-1 py-0.5 rounded text-xs font-mono text-foreground">{children}</code>;
+                                },
+                                pre: ({ children }) => <pre className="bg-muted-foreground/10 p-2 rounded text-xs overflow-x-auto">{children}</pre>,
+                                blockquote: ({ children }) => <blockquote className="border-l-2 border-primary pl-3 italic text-foreground/80">{children}</blockquote>,
+                                strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                                table: ({ children }) => <table className="w-full border-collapse text-xs mb-2">{children}</table>,
+                                th: ({ children }) => <th className="border border-border p-1 bg-muted font-medium text-left">{children}</th>,
+                                td: ({ children }) => <td className="border border-border p-1">{children}</td>,
+                              }}
+                            >
+                              {message.content.replace(/(?:Related Questions?:|🤔.*?)\s*((?:🤔.*?(?:\n|$))+)/gi, '')}
+                            </ReactMarkdown>
+                          </div>
+                          
+                          {/* Related Questions */}
+                          {message.relatedQuestions && message.relatedQuestions.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-border/50">
+                              <p className="text-xs font-medium text-muted-foreground mb-2">💭 Related Questions:</p>
+                              <div className="space-y-1">
+                                {message.relatedQuestions.map((question, idx) => (
+                                  <Button
+                                    key={idx}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-auto p-2 text-xs text-left justify-start hover:bg-muted/50 w-full"
+                                    onClick={() => handleRelatedQuestionClick(question)}
+                                  >
+                                    <span className="text-primary mr-1">🤔</span>
+                                    {question}
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         message.content

@@ -39,6 +39,17 @@ IMPORTANT FORMATTING INSTRUCTIONS:
 - Use tables when comparing information
 - Use blockquotes for important quotes or key points
 
+VISUAL DIAGRAMS (use when helpful):
+- For processes, workflows, or step-by-step concepts, include a Mermaid flowchart using ```mermaid syntax
+- For concept relationships or hierarchical information, include a Mermaid mindmap using ```mermaid syntax
+- Example flowchart: ```mermaid\nflowchart TD\n    A[Start] --> B{Decision}\n    B -->|Yes| C[Action]\n    B -->|No| D[Alternative]\n```
+- Example mindmap: ```mermaid\nmindmap\n  root((Study Plan))\n    Math\n      Algebra\n      Geometry\n    Science\n      Physics\n      Chemistry\n```
+
+RELATED QUESTIONS:
+- At the end of your response, add a "Related Questions:" section with 2-3 relevant follow-up questions
+- Format them as a simple list starting with "🤔 "
+- Make them specific and actionable
+
 Always be encouraging and supportive with a friendly, energetic tone.
 
 ${context ? `Additional context: ${context}` : ''}`;
